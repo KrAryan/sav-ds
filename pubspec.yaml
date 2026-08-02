@@ -1,0 +1,12 @@
+name: sav_ds_workspace
+description: Workspace root for the Sav design system and its catalog.
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+# Native Dart pub workspaces (Dart >= 3.6): one lockfile, one `pub get`.
+workspace:
+  - packages/sav_design_system
+  - packages/sav_design_system/example
+  - apps/widgetbook

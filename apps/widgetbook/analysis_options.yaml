@@ -1,0 +1,15 @@
+include: ../../analysis_options.yaml
+
+analyzer:
+  errors:
+    # Use-case functions are catalog fixtures, not a published API surface.
+    public_member_api_docs: ignore
+
+linter:
+  rules:
+    public_member_api_docs: false
+    # The spec sheets are long prose lists. Wrapping a sentence across two
+    # string literals is intentional and readable here; the lint's real target
+    # (a forgotten comma between two distinct items) does not apply to text
+    # that obviously continues mid-sentence.
+    no_adjacent_strings_in_list: false

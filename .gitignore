@@ -1,0 +1,22 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+
+# Only the workspace root resolves dependencies, so member lockfiles are noise.
+packages/*/pubspec.lock
+packages/*/*/pubspec.lock
+apps/*/pubspec.lock
+
+# Golden test output written on failure; never committed.
+**/failures/
+
+# Editors
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
