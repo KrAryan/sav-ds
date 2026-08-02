@@ -18,7 +18,7 @@ dependencies:
     git:
       url: https://github.com/KrAryan/sav-ds.git
       path: packages/sav_design_system
-      ref: main # pin a tag or commit for production
+      ref: master # pin a tag or commit for production
 ```
 
 ## Set up

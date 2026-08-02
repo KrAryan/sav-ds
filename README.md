@@ -59,8 +59,15 @@ for installation, the component API, theming and token details.
 ## Deployment
 
 Pushing to `master` builds the catalog and the dartdoc API reference and
-publishes both to GitHub Pages as one site. Enable it once under
-**Settings → Pages → Source: GitHub Actions**.
+publishes both to GitHub Pages as one site. Pages is already enabled with
+**Source: GitHub Actions**; no further setup is needed.
+
+The `--base-href` in `deploy-catalog.yaml` is derived from the repository name,
+so the catalog is served from `/sav-ds/`. Renaming the repo therefore moves the
+site without any workflow change — but the links in this file, in
+`packages/sav_design_system/README.md`, `apps/widgetbook/README.md` and
+`packages/sav_design_system/lib/sav_design_system.dart` are hardcoded and would
+need updating.
 
 ## Open questions for design
 
