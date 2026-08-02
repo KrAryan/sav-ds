@@ -17,17 +17,26 @@ Future<void> loadSavFonts() async {
   )..addFont(Future<ByteData>.value(ByteData.sublistView(bytes)))).load();
 }
 
+/// Identifies the boundary a golden is captured from.
+///
+/// Matching on `find.byType(RepaintBoundary).first` would silently pick
+/// whichever boundary Material happens to insert highest in the tree, so the
+/// framing would shift with an unrelated Flutter upgrade.
+const Key savGoldenKey = ValueKey<String>('sav-golden-boundary');
+
 /// Wraps [child] in the Sav theme, sized and padded for a stable golden.
 ///
-/// The padding leaves room for the button's drop shadow, which is drawn
-/// outside the widget's own bounds.
+/// The background is Sterling rather than white so the secondary button's
+/// near-white surface and the drop shadow are both visible. The padding leaves
+/// room for that shadow, which is drawn outside the widget's own bounds.
 Widget savHarness({required Widget child, double width = 329}) => MaterialApp(
   debugShowCheckedModeBanner: false,
   theme: SavTheme.light(),
   home: Scaffold(
     backgroundColor: SavColors.savPrimarySterling,
-    body: Center(
-      child: RepaintBoundary(
+    body: RepaintBoundary(
+      key: savGoldenKey,
+      child: Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: SizedBox(width: width, child: child),

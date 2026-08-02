@@ -28,7 +28,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
 
     await expectLater(
-      find.byType(RepaintBoundary).first,
+      find.byKey(savGoldenKey),
       matchesGoldenFile('goldens/$name.png'),
     );
   }
