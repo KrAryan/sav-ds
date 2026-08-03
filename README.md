@@ -85,8 +85,6 @@ token on `SavButtonTheme`, so changing them is a one-line edit.
 - **Two type scales exist** in the Figma file: the dated "Text Styles Style
   Sheet" (implemented) and a separate "Responsive Type Styles" frame with
   different values (not implemented).
-- **Obviously Narrow Semibold** needs a paid app-embedding licence before the
-  `Title/*` styles can render correctly.
 - **Semantic colours** — no error/success/warning tokens are defined, so those
   Material roles are derived from the brand neutral and should not be treated
   as approved.

@@ -22,6 +22,20 @@ void main() {
     String name, {
     required Widget child,
   }) async {
+    // `matchesGoldenFile` rasterises through `OffsetLayer.toImage`, which is
+    // fixed at one device pixel per logical pixel. flutter_test's view defaults
+    // to a density of 3, so without this the grain would be scaled for a
+    // density the capture never uses and every golden would be three times
+    // finer than what it depicts.
+    //
+    // `physicalSize` is pinned alongside it because the logical surface is
+    // derived from the two together; changing only the density would resize
+    // the frame.
+    tester.view
+      ..devicePixelRatio = 1
+      ..physicalSize = const Size(800, 600);
+    addTearDown(tester.view.reset);
+
     await tester.pumpWidget(savHarness(child: child));
     // Let the spinner reach a fixed rotation. A quarter turn is far enough from
     // 0 and 0.5 that an accidental reset would be obvious in the image.

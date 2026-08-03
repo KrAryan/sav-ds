@@ -35,9 +35,9 @@ Widget buildColorPalette(BuildContext context) => SpecSheet(
 Widget buildTypeScale(BuildContext context) => SpecSheet(
   title: 'Typography',
   subtitle:
-      'DM Sans for body text, bundled as a variable font. Title styles are '
-      'specified in Obviously Narrow Semibold, which is commercial and not '
-      'bundled — those rows currently fall back to DM Sans.',
+      "DM Sans for body text, bundled as a variable font so the scale's "
+      '450/500/550 weights render exactly. Title styles use Obviously Narrow '
+      'Semibold, bundled as an .otf.',
   children: <Widget>[
     for (final style in SavTypography.scale.entries)
       SpecSection(

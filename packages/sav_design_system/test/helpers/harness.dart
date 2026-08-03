@@ -4,16 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sav_design_system/sav_design_system.dart';
 
-/// Registers the bundled DM Sans so tests render real letterforms.
+/// Registers the bundled fonts so tests render real letterforms.
 ///
 /// `flutter_test` ships a placeholder font and does not read a package's
 /// `fonts:` declarations, so goldens would otherwise be full of tofu boxes.
-/// The file is read straight off disk: tests run with the package root as the
-/// working directory.
+/// The files are read straight off disk: tests run with the package root as
+/// the working directory.
 Future<void> loadSavFonts() async {
-  final bytes = File('assets/fonts/DMSans.ttf').readAsBytesSync();
-  await (FontLoader(
-    'packages/sav_design_system/${SavTypography.fontFamily}',
+  await Future.wait(<Future<void>>[
+    _load(SavTypography.fontFamily, 'assets/fonts/DMSans.ttf'),
+    _load(
+      SavTypography.titleFontFamily,
+      'assets/fonts/Obviously-NarrowSemibold.otf',
+    ),
+  ]);
+}
+
+Future<void> _load(String family, String path) {
+  final bytes = File(path).readAsBytesSync();
+  return (FontLoader(
+    'packages/sav_design_system/$family',
   )..addFont(Future<ByteData>.value(ByteData.sublistView(bytes)))).load();
 }
 

@@ -19,6 +19,7 @@ class SavButtonPainter extends CustomPainter {
     required this.enabled,
     required this.loading,
     required this.focused,
+    required this.devicePixelRatio,
   });
 
   /// Styling for the button's variant.
@@ -35,6 +36,9 @@ class SavButtonPainter extends CustomPainter {
 
   /// Whether the button holds keyboard focus.
   final bool focused;
+
+  /// Display density, used to keep the grain one texel per device pixel.
+  final double devicePixelRatio;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -72,12 +76,26 @@ class SavButtonPainter extends CustomPainter {
   /// Figma, where the grain layer is not isolated either and blends with
   /// everything beneath it.
   void _paintGrain(Canvas canvas, Path path) {
-    canvas.drawPath(
-      path,
-      Paint()
-        ..shader = SavNoise.shader
-        ..blendMode = SavNoise.blendMode,
-    );
+    final intensity = theme.grainIntensity;
+    if (intensity <= 0) return;
+
+    final paint = Paint()
+      ..shader = SavNoise.shaderFor(devicePixelRatio)
+      ..blendMode = SavNoise.blendMode;
+
+    if (intensity != 1) {
+      // Scales only the alpha channel. The tile is pure black, so leaving the
+      // colour rows as identity is exact rather than an approximation, and it
+      // avoids regenerating the shared texture per intensity.
+      paint.colorFilter = ColorFilter.matrix(<double>[
+        1, 0, 0, 0, 0, //
+        0, 1, 0, 0, 0, //
+        0, 0, 1, 0, 0, //
+        0, 0, 0, intensity, 0, //
+      ]);
+    }
+
+    canvas.drawPath(path, paint);
   }
 
   /// Draws the inner shadow along the shape's top-left edge.
@@ -143,5 +161,6 @@ class SavButtonPainter extends CustomPainter {
       oldDelegate.theme != theme ||
       oldDelegate.enabled != enabled ||
       oldDelegate.loading != loading ||
-      oldDelegate.focused != focused;
+      oldDelegate.focused != focused ||
+      oldDelegate.devicePixelRatio != devicePixelRatio;
 }
