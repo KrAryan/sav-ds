@@ -164,7 +164,9 @@ Widget buildSavMaterialSpecs(BuildContext context) => SpecSheet(
       title: 'The gradient',
       child: SpecTable(
         rows: <String, String>{
-          'Angle': '163.9° (CSS), preserved at any aspect ratio.',
+          'Direction':
+              'Corner to corner, top-left to bottom-right — it follows the '
+              'frame at any aspect ratio, as Figma draws it.',
           'Default stops':
               'Lumen 10% → White 40% → White 82.3% → Lumen 100% — a soft '
               'diagonal sheen.',
