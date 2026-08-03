@@ -61,31 +61,49 @@ abstract final class SavNoise {
   static const int _seed = 0x5A7D5;
 
   static ui.Image? _tile;
-  static ui.ImageShader? _shader;
+  static final Map<double, ui.ImageShader> _shaders =
+      <double, ui.ImageShader>{};
 
   /// The repeating grain tile, generated on first use and cached process-wide.
   static ui.Image get tile => _tile ??= _generate();
 
-  /// A shader that tiles [tile] across the surface being painted.
+  /// A shader that tiles [tile] so one texel covers exactly one **device**
+  /// pixel.
   ///
-  /// Paint it with [blendMode]; the opacity is already baked in.
-  static ui.ImageShader get shader => _shader ??= ui.ImageShader(
-    tile,
-    TileMode.repeated,
-    TileMode.repeated,
-    Float64List.fromList(<double>[
-      1, 0, 0, 0, //
-      0, 1, 0, 0, //
-      0, 0, 1, 0, //
-      0, 0, 0, 1, //
-    ]),
-  );
+  /// A canvas works in logical pixels, so an untransformed shader stretches
+  /// each grain texel across `devicePixelRatio` device pixels — 2x2 blocks on a
+  /// typical retina screen or browser, 3x3 on a phone. That reads as coarse
+  /// blotches rather than film grain, and makes the texture change character
+  /// with the display. Scaling by `1 / devicePixelRatio` pins the grain to the
+  /// pixel grid so it looks the same everywhere.
+  ///
+  /// Paint it with [blendMode]; the layer opacity is already baked into the
+  /// tile's alpha.
+  static ui.ImageShader shaderFor(double devicePixelRatio) {
+    final scale = devicePixelRatio > 0 ? 1 / devicePixelRatio : 1.0;
+    return _shaders.putIfAbsent(
+      scale,
+      () => ui.ImageShader(
+        tile,
+        TileMode.repeated,
+        TileMode.repeated,
+        Float64List.fromList(<double>[
+          scale, 0, 0, 0, //
+          0, scale, 0, 0, //
+          0, 0, 1, 0, //
+          0, 0, 0, 1, //
+        ]),
+      ),
+    );
+  }
 
-  /// Discards the cached tile. Only useful in tests.
+  /// Discards the cached tile and shaders. Only useful in tests.
   @visibleForTesting
   static void debugReset() {
-    _shader?.dispose();
-    _shader = null;
+    for (final shader in _shaders.values) {
+      shader.dispose();
+    }
+    _shaders.clear();
     _tile?.dispose();
     _tile = null;
   }

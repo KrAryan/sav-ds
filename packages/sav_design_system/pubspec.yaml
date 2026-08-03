@@ -35,3 +35,9 @@ flutter:
     - family: DM Sans
       fonts:
         - asset: assets/fonts/DMSans.ttf
+    # Licensed commercial face (OH no Type Co). Only the .otf is bundled:
+    # Flutter reads ttf/otf, while woff and woff2 are CSS-only formats.
+    - family: Obviously
+      fonts:
+        - asset: assets/fonts/Obviously-NarrowSemibold.otf
+          weight: 600

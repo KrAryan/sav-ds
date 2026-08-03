@@ -7,11 +7,10 @@ import 'package:flutter/painting.dart';
 /// Body text uses **DM Sans**, bundled with this package as a variable font
 /// carrying `wght` (100-1000) and `opsz` (9-40) axes.
 ///
-/// Titles are specified in **Obviously Narrow Semibold**, a commercial face
-/// from OH no Type Co that requires a paid app-embedding licence. It is *not*
-/// bundled. Until licensed files are added, the `Title/*` styles fall back to
-/// DM Sans via [TextStyle.fontFamilyFallback] — correct metrics, wrong
-/// letterforms. See `README.md` for how to drop the files in.
+/// Titles use **Obviously Narrow Semibold**, a licensed commercial face from
+/// OH no Type Co, bundled as an `.otf` (`usWeightClass` 600, matching the
+/// Figma spec). DM Sans stays on [TextStyle.fontFamilyFallback] so any glyph
+/// the narrow cut lacks still renders rather than dropping to tofu.
 ///
 /// ## Why weights are set through `fontVariations`
 ///
@@ -26,7 +25,7 @@ abstract final class SavTypography {
   /// Family name of the bundled body font.
   static const String fontFamily = 'DM Sans';
 
-  /// Family name of the title font. Not bundled — see the class docs.
+  /// Family name of the bundled title font.
   static const String titleFontFamily = 'Obviously';
 
   static const String _package = 'sav_design_system';
@@ -181,10 +180,13 @@ abstract final class SavTypography {
   static TextStyle _title({required double size, required double leading}) =>
       TextStyle(
         fontFamily: titleFontFamily,
+        package: _package,
         fontFamilyFallback: const <String>[_qualifiedFontFamily],
         fontSize: size,
         height: leading / size,
         letterSpacing: 0,
+        // The bundled face is registered at 600, so this matches it exactly
+        // and no synthetic bolding is applied.
         fontWeight: FontWeight.w600, // "Narrow Semibold"
         leadingDistribution: TextLeadingDistribution.even,
       );

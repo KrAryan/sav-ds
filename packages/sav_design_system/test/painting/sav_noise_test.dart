@@ -19,8 +19,19 @@ void main() {
       expect(identical(first, second), isTrue);
     });
 
-    test('caches the shader too', () {
-      expect(identical(SavNoise.shader, SavNoise.shader), isTrue);
+    test('caches one shader per device pixel ratio', () {
+      expect(identical(SavNoise.shaderFor(2), SavNoise.shaderFor(2)), isTrue);
+      // A different density needs a different scale matrix, so it must not
+      // reuse the cached one.
+      expect(identical(SavNoise.shaderFor(2), SavNoise.shaderFor(3)), isFalse);
+    });
+
+    test('survives a nonsensical device pixel ratio', () {
+      expect(SavNoise.shaderFor(0), isNotNull);
+      expect(SavNoise.shaderFor(-1), isNotNull);
+      // Both fall back to the same 1:1 scale rather than dividing by zero.
+      expect(identical(SavNoise.shaderFor(0), SavNoise.shaderFor(-1)), isTrue);
+      expect(identical(SavNoise.shaderFor(0), SavNoise.shaderFor(1)), isTrue);
     });
 
     // Golden tests compare rendered pixels, so a grain that changed between

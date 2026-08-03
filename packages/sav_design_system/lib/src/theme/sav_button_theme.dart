@@ -202,6 +202,7 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     required this.stateChangeDuration,
     required this.focusRingColor,
     required this.focusRingWidth,
+    required this.grainIntensity,
   });
 
   /// The shipped Sav button styling.
@@ -301,6 +302,7 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     stateChangeDuration: SavDurations.stateChange,
     focusRingColor: SavColors.wealthWeave600,
     focusRingWidth: 2,
+    grainIntensity: 1,
   );
 
   /// The frame the Sav button gradients were drawn against in Figma.
@@ -372,6 +374,17 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
   /// Stroke width of the keyboard focus ring.
   final double focusRingWidth;
 
+  /// Multiplier on the film grain's strength.
+  ///
+  /// `1.0` reproduces the Figma layer exactly: its texture was measured at a
+  /// mean alpha of 21/255 with the layer at 40% opacity, and both numbers are
+  /// baked into the tile. That is a deliberately faint effect — roughly a 3%
+  /// luminance modulation — so raise this if the grain reads too subtly on a
+  /// given surface, or set `0` to drop it entirely.
+  ///
+  /// Values above `1` are clamped per channel by the underlying colour matrix.
+  final double grainIntensity;
+
   /// The style for [variant].
   SavButtonVariantStyle styleFor(SavButtonVariant variant) => switch (variant) {
     SavButtonVariant.primary => primary,
@@ -398,6 +411,7 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     Duration? stateChangeDuration,
     Color? focusRingColor,
     double? focusRingWidth,
+    double? grainIntensity,
   }) => SavButtonTheme(
     primary: primary ?? this.primary,
     secondary: secondary ?? this.secondary,
@@ -419,6 +433,7 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     stateChangeDuration: stateChangeDuration ?? this.stateChangeDuration,
     focusRingColor: focusRingColor ?? this.focusRingColor,
     focusRingWidth: focusRingWidth ?? this.focusRingWidth,
+    grainIntensity: grainIntensity ?? this.grainIntensity,
   );
 
   @override
@@ -459,6 +474,7 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
           : other.stateChangeDuration,
       focusRingColor: Color.lerp(focusRingColor, other.focusRingColor, t)!,
       focusRingWidth: lerpDouble(focusRingWidth, other.focusRingWidth, t)!,
+      grainIntensity: lerpDouble(grainIntensity, other.grainIntensity, t)!,
     );
   }
 
@@ -483,7 +499,8 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
           other.pressedOpacity == pressedOpacity &&
           other.stateChangeDuration == stateChangeDuration &&
           other.focusRingColor == focusRingColor &&
-          other.focusRingWidth == focusRingWidth;
+          other.focusRingWidth == focusRingWidth &&
+          other.grainIntensity == grainIntensity;
 
   @override
   int get hashCode => Object.hashAll(<Object>[
@@ -505,5 +522,6 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     stateChangeDuration,
     focusRingColor,
     focusRingWidth,
+    grainIntensity,
   ]);
 }
