@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.4.0
+
+Adds the Material surface from the Figma Material page.
+
+### Added
+
+- **`SavMaterial`** — the frosted-glass surface treatment: a 163.9° sheen
+  gradient, a white hairline border, and a soft shadow. Shape-agnostic; wraps
+  content at a caller-supplied corner radius.
+- **`SavMaterialAccent`** and **`SavMaterialTheme`** — a tonal material adds one
+  gradient stop from a chromatic ramp's `/100`. All seven ramps are supported.
+- Goldens for the default surface and a representative set of tonal accents.
+
+### Notes
+
+- The 6px backdrop blur the spec calls for is inert with the opaque stops Figma
+  exports, so it is skipped until `SavMaterialTheme.fillOpacity` drops below 1.
+  The frosted machinery is in place and tunable; the intended opacity is an open
+  question for design.
+- The Figma frame `Material/Tonal/Wealth` washes in Lush Capital (green), not
+  Wealth Weave (blue). Accents here are keyed by their real ramp, so the
+  mismatch stays on the Figma side.
+
 ## 0.3.0
 
 Completes the Figma Buttons page.

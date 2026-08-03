@@ -85,6 +85,12 @@ token on `SavButtonTheme`, so changing them is a one-line edit.
 - **The label button is drawn at 18-20dp tall**, below WCAG 2.2's 48dp
   target-size minimum. The code pads the interactive area out by default, which
   makes screens taller than the mockups — worth agreeing on.
+- **The Material surface's frosted blur is inert as authored.** The spec
+  includes a 6px backdrop blur, but the gradient stops are opaque, so nothing
+  shows through. What `fillOpacity` should the surface use to reveal the frost —
+  or is the blur not actually wanted?
+- **`Material/Tonal/Wealth` uses Lush Capital (green), not Wealth Weave (blue).**
+  `Material/Tonal/Purple` correctly uses Purple Power. Likely a mislabel.
 - **Optical size**: the text styles are named "9pt Regular" (the `opsz = 9`
   named instance) but Figma renders them at `opsz 36`. The code follows the
   rendered value.

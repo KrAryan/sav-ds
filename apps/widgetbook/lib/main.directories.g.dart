@@ -18,6 +18,8 @@ import 'package:sav_catalog/use_cases/sav_button_use_cases.dart'
     as _sav_catalog_use_cases_sav_button_use_cases;
 import 'package:sav_catalog/use_cases/sav_label_button_use_cases.dart'
     as _sav_catalog_use_cases_sav_label_button_use_cases;
+import 'package:sav_catalog/use_cases/sav_material_use_cases.dart'
+    as _sav_catalog_use_cases_sav_material_use_cases;
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
 
 final directories = <_widgetbook.WidgetbookNode>[
@@ -96,6 +98,31 @@ final directories = <_widgetbook.WidgetbookNode>[
             name: 'Tap target',
             builder: _sav_catalog_use_cases_sav_label_button_use_cases
                 .buildSavLabelButtonTapTarget,
+          ),
+        ],
+      ),
+      _widgetbook.WidgetbookComponent(
+        name: 'SavMaterial',
+        useCases: [
+          _widgetbook.WidgetbookUseCase(
+            name: 'Default & tonal',
+            builder: _sav_catalog_use_cases_sav_material_use_cases
+                .buildSavMaterialGallery,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Frosted glass',
+            builder: _sav_catalog_use_cases_sav_material_use_cases
+                .buildSavMaterialFrosted,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Playground',
+            builder: _sav_catalog_use_cases_sav_material_use_cases
+                .buildSavMaterialPlayground,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Specs',
+            builder: _sav_catalog_use_cases_sav_material_use_cases
+                .buildSavMaterialSpecs,
           ),
         ],
       ),
