@@ -165,31 +165,22 @@ class SavButtonVariantStyle {
   );
 }
 
-/// Theming for `SavButton`.
+/// Every token needed to draw one Sav button surface.
 ///
-/// Registered on [ThemeData.extensions] by `SavTheme`. Override it to restyle
-/// buttons app-wide without forking the widget:
-///
-/// ```dart
-/// Theme(
-///   data: theme.copyWith(
-///     extensions: [
-///       theme.extension<SavButtonTheme>()!.copyWith(height: 56),
-///     ],
-///   ),
-///   child: child,
-/// )
-/// ```
+/// Both `SavButton` and `SavActionButton` are the same surface at different
+/// sizes — same squircle, gradients, grain, shadows and state rules — so they
+/// share this class rather than duplicating it. [SavButtonTheme] holds one
+/// instance per component.
 @immutable
-class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
-  /// Creates a button theme.
-  const SavButtonTheme({
+class SavButtonStyle {
+  /// Creates a button style.
+  const SavButtonStyle({
     required this.primary,
     required this.secondary,
     required this.labelStyle,
     required this.height,
+    required this.minWidth,
     required this.horizontalPadding,
-    required this.gap,
     required this.smoothing,
     required this.borderWidth,
     required this.dropShadow,
@@ -205,112 +196,6 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     required this.grainIntensity,
   });
 
-  /// The shipped Sav button styling.
-  factory SavButtonTheme.standard() => SavButtonTheme(
-    primary: const SavButtonVariantStyle(
-      // A radial gradient whose transform is skewed almost flat, so it reads as
-      // a diagonal sweep from the top-left rather than a burst.
-      fill: SavRadialGradient(
-        colors: <Color>[
-          SavColors.savPrimaryObsidian,
-          SavColors.savPrimarySlate,
-          SavColors.savPrimaryObsidian,
-        ],
-        stops: <double>[0.2, 0.8, 1],
-        referenceSize: referenceSize,
-        a: 327.952,
-        b: 48,
-        c: -328.131,
-        d: 47.7204,
-        e: 1.04778,
-        f: 0,
-      ),
-      border: SavLinearGradient(
-        colors: <Color>[
-          SavColors.savPrimarySlate,
-          SavColors.savPrimaryObsidian,
-          Color(0x661F1F1F), // Obsidian @ 40%
-          Color(0xCC1F1F1F), // Obsidian @ 80%
-        ],
-        stops: <double>[0.16, 0.32, 0.8, 1],
-        referenceSize: referenceSize,
-        from: Offset.zero,
-        to: Offset(13.7142, 93.9991),
-      ),
-      label: SavColors.savPrimaryLumen,
-      // The primary label stays Lumen when disabled; the surface carries the
-      // state change instead.
-      disabledLabel: SavColors.savPrimaryLumen,
-      disabledFillOpacity: 0.4,
-      loadingFillOpacity: 0.8,
-      spinnerTrack: SavColors.savPrimarySterling,
-      spinnerArc: SavColors.savPrimaryWhite,
-    ),
-    secondary: const SavButtonVariantStyle(
-      fill: SavLinearGradient(
-        colors: <Color>[
-          SavColors.savPrimaryLumen,
-          SavColors.savPrimaryWhite,
-          SavColors.savPrimaryLumen,
-        ],
-        stops: <double>[0.2, 0.8, 1],
-        referenceSize: referenceSize,
-        from: Offset.zero,
-        to: Offset(13.7142, 93.9991),
-      ),
-      border: SavLinearGradient(
-        colors: <Color>[
-          SavColors.savPrimaryWhite,
-          SavColors.savPrimaryLumen,
-          Color(0x66FFFFFF), // White @ 40%
-          Color(0xCCFFFFFF), // White @ 80%
-        ],
-        stops: <double>[0.16, 0.32, 0.8, 1],
-        referenceSize: referenceSize,
-        from: Offset.zero,
-        to: Offset(13.7142, 93.9991),
-      ),
-      label: SavColors.savPrimaryObsidian,
-      disabledLabel: SavColors.savPrimarySterling,
-      // The secondary surface is already light; only the label dims.
-      disabledFillOpacity: 1,
-      loadingFillOpacity: 1,
-      spinnerTrack: SavColors.savPrimarySterling,
-      spinnerArc: SavColors.savPrimarySlate,
-    ),
-    labelStyle: SavTypography.calloutMedium,
-    height: SavSizes.buttonHeight,
-    horizontalPadding: SavSpacing.xl,
-    gap: SavSpacing.button,
-    smoothing: SavShape.buttonSmoothing,
-    borderWidth: 1,
-    dropShadow: const SavShadow(
-      color: Color(0x0A1F1F1F), // Obsidian @ 4%
-      offset: Offset(2, 2),
-      sigma: 2,
-    ),
-    innerShadow: const SavShadow(
-      color: Color(0x0A1F1F1F), // Obsidian @ 4%
-      offset: Offset(-1, -1),
-      sigma: 3,
-    ),
-    spinnerSize: SavSizes.spinnerSize,
-    spinnerStrokeWidth: 1.8,
-    spinnerTrackStrokeWidth: 1.67,
-    spinnerRotationDuration: SavDurations.spinnerRotation,
-    pressedOpacity: 0.9,
-    stateChangeDuration: SavDurations.stateChange,
-    focusRingColor: SavColors.wealthWeave600,
-    focusRingWidth: 2,
-    grainIntensity: 1,
-  );
-
-  /// The frame the Sav button gradients were drawn against in Figma.
-  static const Size referenceSize = Size(
-    SavSizes.buttonReferenceWidth,
-    SavSizes.buttonHeight,
-  );
-
   /// Styling for [SavButtonVariant.primary].
   final SavButtonVariantStyle primary;
 
@@ -323,11 +208,14 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
   /// Button height.
   final double height;
 
+  /// Smallest width the button may shrink to when sizing to its content.
+  ///
+  /// Taken from the width the component is drawn at in Figma. Use `0` for a
+  /// button that should hug its label exactly.
+  final double minWidth;
+
   /// Padding on each side of the content.
   final double horizontalPadding;
-
-  /// Gap between the label and any adornment.
-  final double gap;
 
   /// Corner-smoothing preset passed to the squircle.
   final int smoothing;
@@ -386,19 +274,20 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
   final double grainIntensity;
 
   /// The style for [variant].
-  SavButtonVariantStyle styleFor(SavButtonVariant variant) => switch (variant) {
-    SavButtonVariant.primary => primary,
-    SavButtonVariant.secondary => secondary,
-  };
+  SavButtonVariantStyle variantStyle(SavButtonVariant variant) =>
+      switch (variant) {
+        SavButtonVariant.primary => primary,
+        SavButtonVariant.secondary => secondary,
+      };
 
-  @override
-  SavButtonTheme copyWith({
+  /// Returns a copy with the given fields replaced.
+  SavButtonStyle copyWith({
     SavButtonVariantStyle? primary,
     SavButtonVariantStyle? secondary,
     TextStyle? labelStyle,
     double? height,
+    double? minWidth,
     double? horizontalPadding,
-    double? gap,
     int? smoothing,
     double? borderWidth,
     SavShadow? dropShadow,
@@ -412,13 +301,13 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     Color? focusRingColor,
     double? focusRingWidth,
     double? grainIntensity,
-  }) => SavButtonTheme(
+  }) => SavButtonStyle(
     primary: primary ?? this.primary,
     secondary: secondary ?? this.secondary,
     labelStyle: labelStyle ?? this.labelStyle,
     height: height ?? this.height,
+    minWidth: minWidth ?? this.minWidth,
     horizontalPadding: horizontalPadding ?? this.horizontalPadding,
-    gap: gap ?? this.gap,
     smoothing: smoothing ?? this.smoothing,
     borderWidth: borderWidth ?? this.borderWidth,
     dropShadow: dropShadow ?? this.dropShadow,
@@ -436,58 +325,56 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     grainIntensity: grainIntensity ?? this.grainIntensity,
   );
 
-  @override
-  SavButtonTheme lerp(covariant SavButtonTheme? other, double t) {
-    if (other == null) return this;
-    return SavButtonTheme(
-      primary: SavButtonVariantStyle.lerp(primary, other.primary, t),
-      secondary: SavButtonVariantStyle.lerp(secondary, other.secondary, t),
-      labelStyle: TextStyle.lerp(labelStyle, other.labelStyle, t)!,
-      height: lerpDouble(height, other.height, t)!,
-      horizontalPadding: lerpDouble(
-        horizontalPadding,
-        other.horizontalPadding,
-        t,
-      )!,
-      gap: lerpDouble(gap, other.gap, t)!,
-      smoothing: t < 0.5 ? smoothing : other.smoothing,
-      borderWidth: lerpDouble(borderWidth, other.borderWidth, t)!,
-      dropShadow: SavShadow.lerp(dropShadow, other.dropShadow, t)!,
-      innerShadow: SavShadow.lerp(innerShadow, other.innerShadow, t)!,
-      spinnerSize: lerpDouble(spinnerSize, other.spinnerSize, t)!,
-      spinnerStrokeWidth: lerpDouble(
-        spinnerStrokeWidth,
-        other.spinnerStrokeWidth,
-        t,
-      )!,
-      spinnerTrackStrokeWidth: lerpDouble(
-        spinnerTrackStrokeWidth,
-        other.spinnerTrackStrokeWidth,
-        t,
-      )!,
-      spinnerRotationDuration: t < 0.5
-          ? spinnerRotationDuration
-          : other.spinnerRotationDuration,
-      pressedOpacity: lerpDouble(pressedOpacity, other.pressedOpacity, t)!,
-      stateChangeDuration: t < 0.5
-          ? stateChangeDuration
-          : other.stateChangeDuration,
-      focusRingColor: Color.lerp(focusRingColor, other.focusRingColor, t)!,
-      focusRingWidth: lerpDouble(focusRingWidth, other.focusRingWidth, t)!,
-      grainIntensity: lerpDouble(grainIntensity, other.grainIntensity, t)!,
-    );
-  }
+  /// Linearly interpolates between two styles.
+  static SavButtonStyle lerp(SavButtonStyle a, SavButtonStyle b, double t) =>
+      SavButtonStyle(
+        primary: SavButtonVariantStyle.lerp(a.primary, b.primary, t),
+        secondary: SavButtonVariantStyle.lerp(a.secondary, b.secondary, t),
+        labelStyle: TextStyle.lerp(a.labelStyle, b.labelStyle, t)!,
+        height: lerpDouble(a.height, b.height, t)!,
+        minWidth: lerpDouble(a.minWidth, b.minWidth, t)!,
+        horizontalPadding: lerpDouble(
+          a.horizontalPadding,
+          b.horizontalPadding,
+          t,
+        )!,
+        smoothing: t < 0.5 ? a.smoothing : b.smoothing,
+        borderWidth: lerpDouble(a.borderWidth, b.borderWidth, t)!,
+        dropShadow: SavShadow.lerp(a.dropShadow, b.dropShadow, t)!,
+        innerShadow: SavShadow.lerp(a.innerShadow, b.innerShadow, t)!,
+        spinnerSize: lerpDouble(a.spinnerSize, b.spinnerSize, t)!,
+        spinnerStrokeWidth: lerpDouble(
+          a.spinnerStrokeWidth,
+          b.spinnerStrokeWidth,
+          t,
+        )!,
+        spinnerTrackStrokeWidth: lerpDouble(
+          a.spinnerTrackStrokeWidth,
+          b.spinnerTrackStrokeWidth,
+          t,
+        )!,
+        spinnerRotationDuration: t < 0.5
+            ? a.spinnerRotationDuration
+            : b.spinnerRotationDuration,
+        pressedOpacity: lerpDouble(a.pressedOpacity, b.pressedOpacity, t)!,
+        stateChangeDuration: t < 0.5
+            ? a.stateChangeDuration
+            : b.stateChangeDuration,
+        focusRingColor: Color.lerp(a.focusRingColor, b.focusRingColor, t)!,
+        focusRingWidth: lerpDouble(a.focusRingWidth, b.focusRingWidth, t)!,
+        grainIntensity: lerpDouble(a.grainIntensity, b.grainIntensity, t)!,
+      );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SavButtonTheme &&
+      other is SavButtonStyle &&
           other.primary == primary &&
           other.secondary == secondary &&
           other.labelStyle == labelStyle &&
           other.height == height &&
+          other.minWidth == minWidth &&
           other.horizontalPadding == horizontalPadding &&
-          other.gap == gap &&
           other.smoothing == smoothing &&
           other.borderWidth == borderWidth &&
           other.dropShadow == dropShadow &&
@@ -508,8 +395,8 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     secondary,
     labelStyle,
     height,
+    minWidth,
     horizontalPadding,
-    gap,
     smoothing,
     borderWidth,
     dropShadow,
@@ -524,4 +411,275 @@ class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
     focusRingWidth,
     grainIntensity,
   ]);
+}
+
+/// Theming for `SavButton` and `SavActionButton`.
+///
+/// Registered on [ThemeData.extensions] by `SavTheme`. Override it to restyle
+/// buttons app-wide without forking a widget:
+///
+/// ```dart
+/// final theme = Theme.of(context);
+///
+/// Theme(
+///   data: theme.copyWith(
+///     extensions: [
+///       theme.extension<SavButtonTheme>()!.copyWith(
+///         action: theme.extension<SavButtonTheme>()!.action.copyWith(
+///           minWidth: 0,
+///         ),
+///       ),
+///     ],
+///   ),
+///   child: child,
+/// )
+/// ```
+@immutable
+class SavButtonTheme extends ThemeExtension<SavButtonTheme> {
+  /// Creates a button theme.
+  const SavButtonTheme({required this.regular, required this.action});
+
+  /// The shipped Sav button styling.
+  factory SavButtonTheme.standard() =>
+      SavButtonTheme(regular: _regular(), action: _action());
+
+  /// The frame `SavButton` was drawn against in Figma.
+  static const Size regularReferenceSize = Size(
+    SavSizes.buttonReferenceWidth,
+    SavSizes.buttonHeight,
+  );
+
+  /// The frame `SavActionButton` was drawn against in Figma.
+  static const Size actionReferenceSize = Size(
+    SavSizes.actionButtonReferenceWidth,
+    SavSizes.actionButtonHeight,
+  );
+
+  /// Styling for `SavButton` — the full-width, 48dp call to action.
+  final SavButtonStyle regular;
+
+  /// Styling for `SavActionButton` — the compact, 40dp inline button.
+  final SavButtonStyle action;
+
+  @override
+  SavButtonTheme copyWith({SavButtonStyle? regular, SavButtonStyle? action}) =>
+      SavButtonTheme(
+        regular: regular ?? this.regular,
+        action: action ?? this.action,
+      );
+
+  @override
+  SavButtonTheme lerp(covariant SavButtonTheme? other, double t) {
+    if (other == null) return this;
+    return SavButtonTheme(
+      regular: SavButtonStyle.lerp(regular, other.regular, t),
+      action: SavButtonStyle.lerp(action, other.action, t),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SavButtonTheme &&
+          other.regular == regular &&
+          other.action == action;
+
+  @override
+  int get hashCode => Object.hash(regular, action);
+
+  // --- Shipped values, transcribed from the Figma export ---
+
+  /// Shadows are identical on both components.
+  static const SavShadow _dropShadow = SavShadow(
+    color: Color(0x0A1F1F1F), // Obsidian @ 4%
+    offset: Offset(2, 2),
+    sigma: 2,
+  );
+
+  static const SavShadow _innerShadow = SavShadow(
+    color: Color(0x0A1F1F1F), // Obsidian @ 4%
+    offset: Offset(-1, -1),
+    sigma: 3,
+  );
+
+  static SavButtonStyle _regular() => SavButtonStyle(
+    primary: const SavButtonVariantStyle(
+      // A radial gradient whose transform is skewed almost flat, so it reads as
+      // a diagonal sweep from the top-left rather than a burst.
+      fill: SavRadialGradient(
+        colors: <Color>[
+          SavColors.savPrimaryObsidian,
+          SavColors.savPrimarySlate,
+          SavColors.savPrimaryObsidian,
+        ],
+        stops: <double>[0.2, 0.8, 1],
+        referenceSize: regularReferenceSize,
+        a: 327.952,
+        b: 48,
+        c: -328.131,
+        d: 47.7204,
+        e: 1.04778,
+        f: 0,
+      ),
+      border: SavLinearGradient(
+        colors: <Color>[
+          SavColors.savPrimarySlate,
+          SavColors.savPrimaryObsidian,
+          Color(0x661F1F1F), // Obsidian @ 40%
+          Color(0xCC1F1F1F), // Obsidian @ 80%
+        ],
+        stops: <double>[0.16, 0.32, 0.8, 1],
+        referenceSize: regularReferenceSize,
+        from: Offset.zero,
+        to: Offset(13.7142, 93.9991),
+      ),
+      label: SavColors.savPrimaryLumen,
+      // The primary label stays put when disabled; the surface carries the
+      // state change instead.
+      disabledLabel: SavColors.savPrimaryLumen,
+      disabledFillOpacity: 0.4,
+      loadingFillOpacity: 0.8,
+      spinnerTrack: SavColors.savPrimarySterling,
+      spinnerArc: SavColors.savPrimaryWhite,
+    ),
+    secondary: const SavButtonVariantStyle(
+      fill: SavLinearGradient(
+        colors: <Color>[
+          SavColors.savPrimaryLumen,
+          SavColors.savPrimaryWhite,
+          SavColors.savPrimaryLumen,
+        ],
+        stops: <double>[0.2, 0.8, 1],
+        referenceSize: regularReferenceSize,
+        from: Offset.zero,
+        to: Offset(13.7142, 93.9991),
+      ),
+      border: SavLinearGradient(
+        colors: <Color>[
+          SavColors.savPrimaryWhite,
+          SavColors.savPrimaryLumen,
+          Color(0x66FFFFFF), // White @ 40%
+          Color(0xCCFFFFFF), // White @ 80%
+        ],
+        stops: <double>[0.16, 0.32, 0.8, 1],
+        referenceSize: regularReferenceSize,
+        from: Offset.zero,
+        to: Offset(13.7142, 93.9991),
+      ),
+      label: SavColors.savPrimaryObsidian,
+      disabledLabel: SavColors.savPrimarySterling,
+      // The secondary surface is already light; only the label dims.
+      disabledFillOpacity: 1,
+      loadingFillOpacity: 1,
+      spinnerTrack: SavColors.savPrimarySterling,
+      spinnerArc: SavColors.savPrimarySlate,
+    ),
+    labelStyle: SavTypography.calloutMedium,
+    height: SavSizes.buttonHeight,
+    // Full-width by default, so there is nothing to hold it open.
+    minWidth: 0,
+    horizontalPadding: SavSpacing.xl,
+    smoothing: SavShape.buttonSmoothing,
+    borderWidth: 1,
+    dropShadow: _dropShadow,
+    innerShadow: _innerShadow,
+    spinnerSize: SavSizes.spinnerSize,
+    spinnerStrokeWidth: 1.8,
+    spinnerTrackStrokeWidth: 1.67,
+    spinnerRotationDuration: SavDurations.spinnerRotation,
+    pressedOpacity: 0.9,
+    stateChangeDuration: SavDurations.stateChange,
+    focusRingColor: SavColors.wealthWeave600,
+    focusRingWidth: 2,
+    grainIntensity: 1,
+  );
+
+  static SavButtonStyle _action() => SavButtonStyle(
+    primary: const SavButtonVariantStyle(
+      // Same normalised geometry as the regular button, re-exported against
+      // the smaller frame.
+      fill: SavRadialGradient(
+        colors: <Color>[
+          SavColors.savPrimaryObsidian,
+          SavColors.savPrimarySlate,
+          SavColors.savPrimaryObsidian,
+        ],
+        stops: <double>[0.2, 0.8, 1],
+        referenceSize: actionReferenceSize,
+        a: 147.529,
+        b: 40,
+        c: -147.609,
+        d: 39.767,
+        e: 0.47134,
+        f: 0,
+      ),
+      border: SavLinearGradient(
+        colors: <Color>[
+          SavColors.savPrimarySlate,
+          SavColors.savPrimaryObsidian,
+          Color(0x661F1F1F), // Obsidian @ 40%
+          Color(0xCC1F1F1F), // Obsidian @ 80%
+        ],
+        stops: <double>[0.16, 0.32, 0.8, 1],
+        referenceSize: actionReferenceSize,
+        from: Offset.zero,
+        to: Offset(20.1498, 74.5541),
+      ),
+      // Note this is White, not the Lumen the regular button uses.
+      label: SavColors.savPrimaryWhite,
+      disabledLabel: SavColors.savPrimaryWhite,
+      disabledFillOpacity: 0.4,
+      loadingFillOpacity: 0.8,
+      spinnerTrack: SavColors.savPrimarySterling,
+      spinnerArc: SavColors.savPrimaryWhite,
+    ),
+    secondary: const SavButtonVariantStyle(
+      fill: SavLinearGradient(
+        colors: <Color>[
+          SavColors.savPrimaryLumen,
+          SavColors.savPrimaryWhite,
+          SavColors.savPrimaryLumen,
+        ],
+        stops: <double>[0.2, 0.8, 1],
+        referenceSize: actionReferenceSize,
+        from: Offset.zero,
+        to: Offset(20.1498, 74.5541),
+      ),
+      border: SavLinearGradient(
+        colors: <Color>[
+          SavColors.savPrimaryWhite,
+          SavColors.savPrimaryLumen,
+          Color(0x66FFFFFF), // White @ 40%
+          Color(0xCCFFFFFF), // White @ 80%
+        ],
+        stops: <double>[0.16, 0.32, 0.8, 1],
+        referenceSize: actionReferenceSize,
+        from: Offset.zero,
+        to: Offset(20.1498, 74.5541),
+      ),
+      label: SavColors.savPrimaryObsidian,
+      disabledLabel: SavColors.savPrimarySterling,
+      disabledFillOpacity: 1,
+      loadingFillOpacity: 1,
+      spinnerTrack: SavColors.savPrimarySterling,
+      spinnerArc: SavColors.savPrimarySlate,
+    ),
+    labelStyle: SavTypography.bodyBold,
+    height: SavSizes.actionButtonHeight,
+    minWidth: SavSizes.actionButtonReferenceWidth,
+    horizontalPadding: SavSpacing.button,
+    smoothing: SavShape.buttonSmoothing,
+    borderWidth: 1,
+    dropShadow: _dropShadow,
+    innerShadow: _innerShadow,
+    spinnerSize: SavSizes.actionSpinnerSize,
+    spinnerStrokeWidth: 1.62,
+    spinnerTrackStrokeWidth: 1.503,
+    spinnerRotationDuration: SavDurations.spinnerRotation,
+    pressedOpacity: 0.9,
+    stateChangeDuration: SavDurations.stateChange,
+    focusRingColor: SavColors.wealthWeave600,
+    focusRingWidth: 2,
+    grainIntensity: 1,
+  );
 }

@@ -76,19 +76,54 @@ SavButton.primary(
 );
 ```
 
+### `SavActionButton`
+
+The compact sibling: 40dp instead of 48dp, `Body/Bold` instead of
+`Callout/Medium`, and it hugs its content rather than filling the width. Use it
+inline, in a toolbar, or wherever a full-width call to action would dominate.
+
+```dart
+Row(
+  children: [
+    SavActionButton.secondary(label: 'Skip', onPressed: skip),
+    const SizedBox(width: SavSpacing.md),
+    SavActionButton.primary(label: 'Top up', onPressed: topUp),
+  ],
+);
+```
+
+The API is identical to `SavButton` with two differences:
+
+| Parameter | Difference |
+|---|---|
+| `expand` | Defaults to **`false`**, not `true` — this is a compact control. |
+| width | Will not shrink below **148dp**, the width the component is drawn at in Figma, so a short label still produces the button the design shows. Long labels grow past it. |
+
+> **Accessibility:** at 40dp it sits below the 48dp WCAG 2.2 target-size
+> minimum. Give it at least 4dp of clearance on each side, or wrap it so the
+> touch area reaches 48dp.
+
+Everything else is shared: the same squircle, gradients, grain, shadows and
+state rules, drawn by the same painter.
+
 ## Restyling
 
 Override the `SavButtonTheme` extension in a `Theme` scope rather than passing
 style arguments at the call site — that keeps every button in the subtree
-consistent:
+consistent. The extension holds one `SavButtonStyle` per component, so you can
+retune one without touching the other:
 
 ```dart
 final theme = Theme.of(context);
+final buttons = theme.extension<SavButtonTheme>()!;
 
 Theme(
   data: theme.copyWith(
     extensions: [
-      theme.extension<SavButtonTheme>()!.copyWith(height: 56),
+      buttons.copyWith(
+        regular: buttons.regular.copyWith(height: 56),
+        action: buttons.action.copyWith(minWidth: 0),
+      ),
     ],
   ),
   child: child,
