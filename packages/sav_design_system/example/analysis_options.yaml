@@ -1,0 +1,10 @@
+include: ../../../analysis_options.yaml
+
+analyzer:
+  errors:
+    # The example is illustrative code, not a published API surface.
+    public_member_api_docs: ignore
+
+linter:
+  rules:
+    public_member_api_docs: false

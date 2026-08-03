@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.44.7"
+
+jobs:
+  analyze-and-test:
+    name: Analyze & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      # Catches a Figma token export that was committed without regenerating
+      # the Dart tokens, which would otherwise ship stale colours.
+      - name: Check colour tokens are in sync
+        working-directory: packages/sav_design_system
+        run: |
+          dart run tool/generate_tokens.dart
+          if ! git diff --quiet -- lib/src/tokens/sav_colors.g.dart; then
+            echo "::error::sav_colors.g.dart is out of date."
+            echo "Run: cd packages/sav_design_system && dart run tool/generate_tokens.dart"
+            git --no-pager diff -- lib/src/tokens/sav_colors.g.dart
+            exit 1
+          fi
+
+      - name: Test package
+        working-directory: packages/sav_design_system
+        run: flutter test
+
+      - name: Test catalog
+        working-directory: apps/widgetbook
+        run: flutter test
+
+      # Golden failures write the actual/diff images next to the test; keeping
+      # them makes a pixel regression reviewable without reproducing locally.
+      - name: Upload golden failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-failures
+          path: packages/sav_design_system/test/**/failures/**
+          if-no-files-found: ignore
+
+  build-catalog:
+    name: Build catalog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      # Fails the PR if a use case was added without regenerating the
+      # directories file, which would silently drop it from the catalog.
+      - name: Check generated catalog directories are in sync
+        working-directory: apps/widgetbook
+        run: |
+          dart run build_runner build
+          if ! git diff --quiet -- lib; then
+            echo "::error::Widgetbook directories are out of date."
+            echo "Run: cd apps/widgetbook && dart run build_runner build"
+            git --no-pager diff -- lib
+            exit 1
+          fi
+
+      - name: Build web
+        working-directory: apps/widgetbook
+        run: flutter build web --release --base-href /sav-ds/

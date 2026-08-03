@@ -1,0 +1,19 @@
+Copyright (c) 2026 Sav. All rights reserved.
+
+This package is proprietary. It may be used, copied and modified only by Sav
+and by parties Sav has authorised in writing. It may not be redistributed
+publicly without that permission.
+
+Replace this file if the package is ever opened up (MIT and BSD-3-Clause are
+the usual choices for a published Flutter package). Note that pub.dev requires
+an OSI-approved licence for a package to score full points.
+
+--- Third-party assets ---
+
+assets/fonts/DMSans.ttf
+  DM Sans, Copyright (c) 2014-2024 Colophon Foundry, Jonny Pinhorn and
+  Indian Type Foundry. Licensed under the SIL Open Font License, Version 1.1.
+  Full text: assets/fonts/OFL.txt
+
+The squircle geometry in lib/src/painting/sav_squircle.dart is derived from
+scotato/figma-squircle (https://github.com/scotato/figma-squircle).

@@ -1,0 +1,69 @@
+name: Deploy catalog
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Lets the workflow publish to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; always finish the newest one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.44.7"
+
+jobs:
+  build:
+    name: Build catalog and API docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Generate catalog directories
+        working-directory: apps/widgetbook
+        run: dart run build_runner build
+
+      # `--base-href` must match the repository name: on a GitHub Pages project
+      # site the app is served from /<repo>/, and without this every asset
+      # request 404s.
+      - name: Build catalog
+        working-directory: apps/widgetbook
+        run: flutter build web --release --base-href /${{ github.event.repository.name }}/
+
+      # Published alongside the catalog so one URL carries both the visual
+      # reference and the full API reference.
+      - name: Build API reference
+        working-directory: packages/sav_design_system
+        run: dart doc --output ../../apps/widgetbook/build/web/api
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/widgetbook/build/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
