@@ -29,7 +29,11 @@ Widget buildSavButtonPlayground(BuildContext context) {
   return Theme(
     data: theme.copyWith(
       extensions: <ThemeExtension<dynamic>>[
-        theme.extension<SavButtonTheme>()!.copyWith(grainIntensity: grain),
+        theme.extension<SavButtonTheme>()!.copyWith(
+          regular: theme.extension<SavButtonTheme>()!.regular.copyWith(
+            grainIntensity: grain,
+          ),
+        ),
       ],
     ),
     child: Center(
@@ -226,7 +230,7 @@ Widget buildSavButtonSpecs(BuildContext context) => SpecSheet(
 );
 
 final int _buttonRadius = SavSquircle.outerRadius(
-  SavButtonTheme.referenceSize,
+  SavButtonTheme.regularReferenceSize,
 ).toInt();
 
 enum _ButtonState {

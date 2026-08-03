@@ -12,6 +12,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:sav_catalog/foundations/foundations_use_cases.dart'
     as _sav_catalog_foundations_foundations_use_cases;
+import 'package:sav_catalog/use_cases/sav_action_button_use_cases.dart'
+    as _sav_catalog_use_cases_sav_action_button_use_cases;
 import 'package:sav_catalog/use_cases/sav_button_use_cases.dart'
     as _sav_catalog_use_cases_sav_button_use_cases;
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
@@ -20,6 +22,31 @@ final directories = <_widgetbook.WidgetbookNode>[
   _widgetbook.WidgetbookCategory(
     name: 'Components',
     children: [
+      _widgetbook.WidgetbookComponent(
+        name: 'SavActionButton',
+        useCases: [
+          _widgetbook.WidgetbookUseCase(
+            name: 'Against SavButton',
+            builder: _sav_catalog_use_cases_sav_action_button_use_cases
+                .buildSavActionButtonComparison,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'All states',
+            builder: _sav_catalog_use_cases_sav_action_button_use_cases
+                .buildSavActionButtonMatrix,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Playground',
+            builder: _sav_catalog_use_cases_sav_action_button_use_cases
+                .buildSavActionButtonPlayground,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Specs',
+            builder: _sav_catalog_use_cases_sav_action_button_use_cases
+                .buildSavActionButtonSpecs,
+          ),
+        ],
+      ),
       _widgetbook.WidgetbookComponent(
         name: 'SavButton',
         useCases: [

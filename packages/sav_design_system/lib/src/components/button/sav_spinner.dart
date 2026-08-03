@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
+import 'package:sav_design_system/src/tokens/sav_dimensions.dart';
 
 /// The indeterminate spinner shown inside a loading `SavButton`.
 ///
@@ -102,10 +103,10 @@ class _SavSpinnerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
-    // Figma draws r = 8.3333 in a 20x20 box: inset by the wider of the two
-    // strokes so neither clips at the edge.
-    final radius =
-        size.shortestSide / 2 - math.max(strokeWidth, trackStrokeWidth) / 2;
+    // A proportion of the box, not something derived from the stroke: Figma
+    // draws r = 8.3333 in a 20dp spinner and r = 7.5 in an 18dp one, both
+    // exactly 5/12 of the size. See [SavSizes.spinnerRadiusRatio].
+    final radius = size.shortestSide * SavSizes.spinnerRadiusRatio;
     if (radius <= 0) return;
 
     canvas

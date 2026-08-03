@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.2.0
+
+Adds the second component from the Figma Buttons page and refactors the theme
+so the two share one implementation.
+
+### Added
+
+- **`SavActionButton`** — the compact 40dp control, matching Figma node
+  `86:4029`. Two variants across default, disabled and loading, with the
+  smaller `Body/Bold` label and a 148dp minimum width taken from the design.
+- **`SavButtonStyle`** — every token needed to draw one button surface.
+  `SavButtonTheme` now holds one per component (`regular` and `action`), so a
+  third button can be added without duplicating the class again.
+- Goldens for all six `SavActionButton` states.
+
+### Changed
+
+- **Optical size is now per style.** Figma renders the 16px Callout styles at
+  `opsz 36` and the 14px Body styles at `opsz 32`, so a single constant was
+  wrong. `SavTypography.opticalSizeFor` carries both confirmed values and
+  extrapolates the rest.
+- **Spinner radius corrected.** It was derived from the stroke width, which
+  made it slightly too large. Figma draws `r = 8.3333` in a 20dp spinner and
+  `r = 7.5` in an 18dp one — both exactly `5/12` of the size, now expressed as
+  `SavSizes.spinnerRadiusRatio`.
+- `SavButtonTheme` fields moved onto `SavButtonStyle`; `SavButtonTheme.copyWith`
+  now takes `regular` and `action`. `SavButtonTheme.referenceSize` is now
+  `regularReferenceSize`.
+- Removed the unused `gap` token.
+
 ## 0.1.0
 
 First release. Establishes the foundation and ships `SavButton` as the

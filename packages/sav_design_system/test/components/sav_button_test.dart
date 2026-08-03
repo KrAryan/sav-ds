@@ -260,7 +260,11 @@ void main() {
           MaterialApp(
             theme: base.copyWith(
               extensions: <ThemeExtension<dynamic>>[
-                base.extension<SavButtonTheme>()!.copyWith(height: 72),
+                base.extension<SavButtonTheme>()!.copyWith(
+                  regular: base.extension<SavButtonTheme>()!.regular.copyWith(
+                    height: 72,
+                  ),
+                ),
               ],
             ),
             home: Scaffold(

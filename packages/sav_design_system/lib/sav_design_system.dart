@@ -18,6 +18,7 @@
 /// <https://kraryan.github.io/sav-ds/>
 library;
 
+export 'src/components/button/sav_action_button.dart';
 export 'src/components/button/sav_button.dart';
 export 'src/components/button/sav_spinner.dart';
 export 'src/painting/sav_gradient.dart';

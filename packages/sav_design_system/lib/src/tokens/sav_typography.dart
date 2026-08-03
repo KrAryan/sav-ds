@@ -37,13 +37,21 @@ abstract final class SavTypography {
   /// the raw string, so it is spelled out here.
   static const String _qualifiedFontFamily = 'packages/$_package/$fontFamily';
 
-  /// Value applied to DM Sans's optical-size axis.
+  /// Value applied to DM Sans's optical-size axis for a given font size.
   ///
-  /// Figma reports `opsz 36` for the button label, which is the only style with
-  /// a confirmed value; it is applied across the scale for consistency. Note
-  /// that Figma *names* these styles "9pt Regular" (the `opsz = 9` named
-  /// instance) while rendering them at 36 — worth confirming with design.
-  static const double opticalSize = 36;
+  /// Two values are confirmed from Figma: the 16px Callout styles render at
+  /// `opsz 36` (the `Button` component) and the 14px Body styles at `opsz 32`
+  /// (the `Action Button` component). Both sit close to `2.25x` the font size,
+  /// so the remaining sizes follow that relationship, clamped to the axis's
+  /// 9-40 range. Those extrapolated values are worth confirming with design.
+  ///
+  /// Note that Figma *names* these styles "9pt Regular" — the `opsz = 9` named
+  /// instance — while rendering them far higher. The rendered value wins here.
+  static double opticalSizeFor(double fontSize) => switch (fontSize) {
+    16 => 36,
+    14 => 32,
+    _ => (fontSize * 2.25).clamp(9.0, 40.0),
+  };
 
   /// OpenType features Figma applies to Sav text: case-sensitive forms plus
   /// stylistic sets 1 and 3. All three exist in the bundled DM Sans.
@@ -169,7 +177,7 @@ abstract final class SavTypography {
     letterSpacing: 0,
     fontVariations: <FontVariation>[
       FontVariation('wght', weight),
-      const FontVariation('opsz', opticalSize),
+      FontVariation('opsz', opticalSizeFor(size)),
     ],
     fontFeatures: features,
     // Figma centres the leading around the text; Flutter's default puts it all
