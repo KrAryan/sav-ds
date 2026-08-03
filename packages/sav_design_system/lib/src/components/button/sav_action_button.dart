@@ -2,67 +2,66 @@ import 'package:flutter/material.dart';
 import 'package:sav_design_system/src/components/button/sav_button_surface.dart';
 import 'package:sav_design_system/src/theme/sav_button_theme.dart';
 
-/// The primary action control of the Sav design system.
+/// The compact action control of the Sav design system.
 ///
 /// ```dart
-/// SavButton.primary(
-///   label: 'Continue',
-///   onPressed: () => submit(),
+/// SavActionButton.primary(
+///   label: 'Top up',
+///   onPressed: () => topUp(),
 /// )
 /// ```
 ///
-/// Full width and 48dp tall. For the compact 40dp control used inline or in a
-/// toolbar, see `SavActionButton`.
+/// The same surface as `SavButton` — squircle, gradient, grain, shadows — at
+/// 40dp instead of 48dp, with the smaller `Body/Bold` label. Use it inline, in
+/// a toolbar, or anywhere a full-width call to action would be too heavy.
+///
+/// ## Sizing
+///
+/// Unlike `SavButton`, this one sizes to its content by default. It will not
+/// shrink below [SavButtonStyle.minWidth] — 148dp, the width the component is
+/// drawn at in Figma — so a short label still produces the button the design
+/// shows. Set [expand] to fill the available width instead.
 ///
 /// ## States
 ///
-/// The button has three states, matching the Figma component:
-///
-/// * **Default** — interactive.
-/// * **Disabled** — set [onPressed] to `null`. There is deliberately no
-///   `isDisabled` flag: a single source of truth cannot contradict itself, and
-///   it matches how every built-in Flutter button behaves.
-/// * **Loading** — set [isLoading]. Taps are ignored and the label is replaced
-///   by a spinner. The label's width is still reserved, so a button that sizes
-///   to its content does not jump when loading begins.
+/// Default, disabled (`onPressed: null`) and loading, exactly as `SavButton`.
 ///
 /// ## Styling
 ///
-/// All visual tokens come from [SavButtonTheme.regular], registered by
-/// `SavTheme`. To restyle every button in a subtree, override the extension
-/// rather than passing style arguments here — see [SavButtonTheme].
-class SavButton extends StatelessWidget {
-  /// Creates a Sav button.
-  const SavButton({
+/// All visual tokens come from [SavButtonTheme.action], registered by
+/// `SavTheme`.
+class SavActionButton extends StatelessWidget {
+  /// Creates a Sav action button.
+  const SavActionButton({
     required this.label,
     required this.onPressed,
     this.variant = SavButtonVariant.primary,
     this.isLoading = false,
-    this.expand = true,
+    this.expand = false,
     this.focusNode,
     this.autofocus = false,
     this.loadingSemanticLabel,
     super.key,
   });
 
-  /// Creates a high-emphasis button. See [SavButtonVariant.primary].
-  const SavButton.primary({
+  /// Creates a high-emphasis action button.
+  const SavActionButton.primary({
     required this.label,
     required this.onPressed,
     this.isLoading = false,
-    this.expand = true,
+    this.expand = false,
     this.focusNode,
     this.autofocus = false,
     this.loadingSemanticLabel,
     super.key,
   }) : variant = SavButtonVariant.primary;
 
-  /// Creates a lower-emphasis button. See [SavButtonVariant.secondary].
-  const SavButton.secondary({
+  /// Creates a lower-emphasis action button.
+  const SavActionButton.secondary({
     required this.label,
     required this.onPressed,
     this.isLoading = false,
-    this.expand = true,
+    this.expand = false,
     this.focusNode,
     this.autofocus = false,
     this.loadingSemanticLabel,
@@ -85,9 +84,8 @@ class SavButton extends StatelessWidget {
 
   /// Whether the button fills the available width.
   ///
-  /// Sav buttons are full-width by default. Set to `false` to size to the
-  /// label — for example in a row of two buttons. Requires a bounded width
-  /// when `true`.
+  /// Defaults to `false`: an action button is a compact control. Requires a
+  /// bounded width when `true`.
   final bool expand;
 
   /// An optional focus node to control the button's focus.
@@ -98,17 +96,10 @@ class SavButton extends StatelessWidget {
 
   /// Announced by screen readers while [isLoading] is set.
   ///
-  /// No default is provided: this package ships no localisations, and
-  /// announcing an English string inside a non-English app is worse than
-  /// staying quiet. Pass a localised string. Regardless of this value, the
-  /// button reports itself as disabled while loading, so assistive technology
-  /// already knows it cannot be activated.
+  /// No default is provided; see `SavButton.loadingSemanticLabel`.
   final String? loadingSemanticLabel;
 
   /// Whether an [onPressed] callback was supplied.
-  ///
-  /// Note this stays `true` while loading; use [isInteractive] to test whether
-  /// a tap will do anything.
   bool get isEnabled => onPressed != null;
 
   /// Whether the button currently responds to input.
@@ -119,8 +110,8 @@ class SavButton extends StatelessWidget {
     label: label,
     onPressed: onPressed,
     style:
-        Theme.of(context).extension<SavButtonTheme>()?.regular ??
-        SavButtonTheme.standard().regular,
+        Theme.of(context).extension<SavButtonTheme>()?.action ??
+        SavButtonTheme.standard().action,
     variant: variant,
     isLoading: isLoading,
     expand: expand,

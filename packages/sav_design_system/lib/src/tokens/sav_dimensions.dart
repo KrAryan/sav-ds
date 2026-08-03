@@ -48,8 +48,29 @@ abstract final class SavSizes {
   /// and what the golden tests pin.
   static const double buttonReferenceWidth = 329;
 
+  /// Height of an action button.
+  static const double actionButtonHeight = 40;
+
+  /// Width the action button is drawn at in Figma.
+  ///
+  /// Used as its minimum width: the component is a fixed 148dp in the design,
+  /// with the label centred in it, so a short label should not collapse the
+  /// button. It still grows for longer labels.
+  static const double actionButtonReferenceWidth = 148;
+
   /// Diameter of the in-button loading spinner.
   static const double spinnerSize = 20;
+
+  /// Diameter of the spinner inside an action button.
+  static const double actionSpinnerSize = 18;
+
+  /// The spinner's arc radius, as a fraction of its overall size.
+  ///
+  /// Figma draws `r = 8.3333` in a 20dp spinner and `r = 7.5` in an 18dp one —
+  /// both exactly `5/12`. The remainder is deliberate breathing room, so the
+  /// radius is a proportion of the box rather than something derived from the
+  /// stroke width.
+  static const double spinnerRadiusRatio = 5 / 12;
 
   /// Minimum interactive target, per WCAG 2.2 target-size guidance.
   static const double minTapTarget = 48;
