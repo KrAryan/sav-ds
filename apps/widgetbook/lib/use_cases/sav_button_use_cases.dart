@@ -13,19 +13,39 @@ Widget buildSavButtonPlayground(BuildContext context) {
     description: 'Passes a null onPressed, which is how the button disables.',
   );
 
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(SavSpacing.xl),
-      child: SavButton(
-        label: knobs.string(label: 'Label', initialValue: 'Label'),
-        variant: knobs.object.segmented(
-          label: 'Variant',
-          options: SavButtonVariant.values,
-          labelBuilder: (variant) => variant.name,
+  // The film grain is deliberately faint — it reproduces a Figma layer whose
+  // texture averages 21/255 alpha at 40% opacity. Exposing the multiplier lets
+  // design judge the strength here rather than by reading numbers.
+  final grain = knobs.double.slider(
+    label: 'Grain intensity',
+    initialValue: 1,
+    max: 6,
+    divisions: 12,
+    description: '1.0 matches Figma exactly. 0 removes the grain.',
+  );
+
+  final theme = Theme.of(context);
+
+  return Theme(
+    data: theme.copyWith(
+      extensions: <ThemeExtension<dynamic>>[
+        theme.extension<SavButtonTheme>()!.copyWith(grainIntensity: grain),
+      ],
+    ),
+    child: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(SavSpacing.xl),
+        child: SavButton(
+          label: knobs.string(label: 'Label', initialValue: 'Label'),
+          variant: knobs.object.segmented(
+            label: 'Variant',
+            options: SavButtonVariant.values,
+            labelBuilder: (variant) => variant.name,
+          ),
+          isLoading: knobs.boolean(label: 'Loading'),
+          expand: knobs.boolean(label: 'Expand', initialValue: true),
+          onPressed: disabled ? null : () {},
         ),
-        isLoading: knobs.boolean(label: 'Loading'),
-        expand: knobs.boolean(label: 'Expand', initialValue: true),
-        onPressed: disabled ? null : () {},
       ),
     ),
   );

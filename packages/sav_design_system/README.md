@@ -126,14 +126,14 @@ the SIL Open Font License; see `assets/fonts/OFL.txt`. One 240 KB file covers
 the whole scale, including the non-standard weights (450, 500, 550) the design
 uses, which the nine fixed `FontWeight` steps cannot express.
 
-**Obviously Narrow Semibold** — used by the `Title/*` styles — is a commercial
-face from OH no Type Co and requires a paid app-embedding licence. It is **not
-bundled**, so those styles currently fall back to DM Sans: correct metrics,
-wrong letterforms. To enable it:
+**Obviously Narrow Semibold** — used by the `Title/*` styles — is bundled as an
+`.otf`. It is a **commercial face from OH no Type Co**: the copy here is
+licensed to Sav, so treat this package as proprietary and do not redistribute
+it publicly without checking the licence terms. Only the `.otf` is bundled;
+Flutter reads `ttf`/`otf`, while `woff` and `woff2` are CSS-only formats.
 
-1. Drop the licensed files into `assets/fonts/`.
-2. Add an `Obviously` family to the `fonts:` section of `pubspec.yaml`.
-3. Add `package: 'sav_design_system'` to `SavTypography._title`.
+DM Sans stays on `fontFamilyFallback` for the title styles, so any glyph the
+narrow cut lacks still renders instead of dropping to tofu.
 
 ## Shape
 

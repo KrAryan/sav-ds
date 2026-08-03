@@ -213,6 +213,7 @@ class _SavButtonState extends State<SavButton> {
                   enabled: widget.isEnabled,
                   loading: widget.isLoading,
                   focused: _focused,
+                  devicePixelRatio: MediaQuery.devicePixelRatioOf(context),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(

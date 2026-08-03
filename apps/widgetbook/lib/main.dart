@@ -19,6 +19,10 @@ class SavCatalog extends StatelessWidget {
   Widget build(BuildContext context) => Widgetbook(
     directories: directories,
     appBuilder: _savAppBuilder,
+    // Sav has no dark palette, so a dark catalog chrome would frame every
+    // component against a background the design system never uses. Pin the
+    // shell to light rather than following the reviewer's OS setting.
+    themeMode: ThemeMode.light,
     addons: <WidgetbookAddon<dynamic>>[
       ViewportAddon(<ViewportData>[
         Viewports.none,
