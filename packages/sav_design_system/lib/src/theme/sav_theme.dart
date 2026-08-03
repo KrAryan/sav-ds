@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sav_design_system/src/theme/sav_button_theme.dart';
+import 'package:sav_design_system/src/theme/sav_label_button_theme.dart';
 import 'package:sav_design_system/src/tokens/sav_colors.g.dart';
 import 'package:sav_design_system/src/tokens/sav_typography.dart';
 
@@ -32,7 +33,10 @@ abstract final class SavTheme {
       textTheme: textTheme,
       scaffoldBackgroundColor: colorScheme.surface,
       splashFactory: InkSparkle.splashFactory,
-      extensions: <ThemeExtension<dynamic>>[SavButtonTheme.standard()],
+      extensions: <ThemeExtension<dynamic>>[
+        SavButtonTheme.standard(),
+        SavLabelButtonTheme.standard(),
+      ],
     );
   }
 

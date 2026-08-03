@@ -16,6 +16,8 @@ import 'package:sav_catalog/use_cases/sav_action_button_use_cases.dart'
     as _sav_catalog_use_cases_sav_action_button_use_cases;
 import 'package:sav_catalog/use_cases/sav_button_use_cases.dart'
     as _sav_catalog_use_cases_sav_button_use_cases;
+import 'package:sav_catalog/use_cases/sav_label_button_use_cases.dart'
+    as _sav_catalog_use_cases_sav_label_button_use_cases;
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
 
 final directories = <_widgetbook.WidgetbookNode>[
@@ -69,6 +71,31 @@ final directories = <_widgetbook.WidgetbookNode>[
             name: 'Specs',
             builder:
                 _sav_catalog_use_cases_sav_button_use_cases.buildSavButtonSpecs,
+          ),
+        ],
+      ),
+      _widgetbook.WidgetbookComponent(
+        name: 'SavLabelButton',
+        useCases: [
+          _widgetbook.WidgetbookUseCase(
+            name: 'All states',
+            builder: _sav_catalog_use_cases_sav_label_button_use_cases
+                .buildSavLabelButtonMatrix,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Playground',
+            builder: _sav_catalog_use_cases_sav_label_button_use_cases
+                .buildSavLabelButtonPlayground,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Specs',
+            builder: _sav_catalog_use_cases_sav_label_button_use_cases
+                .buildSavLabelButtonSpecs,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Tap target',
+            builder: _sav_catalog_use_cases_sav_label_button_use_cases
+                .buildSavLabelButtonTapTarget,
           ),
         ],
       ),
