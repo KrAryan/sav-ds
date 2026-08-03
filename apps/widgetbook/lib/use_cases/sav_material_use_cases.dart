@@ -86,6 +86,7 @@ Widget buildSavMaterialGallery(BuildContext context) => _Backdrop(
 Widget buildSavMaterialFrosted(BuildContext context) {
   final base = Theme.of(context);
   return _Backdrop(
+    behind: const _MutedContent(),
     child: Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -211,48 +212,59 @@ Widget buildSavMaterialSpecs(BuildContext context) => SpecSheet(
   ],
 );
 
-/// A busy, deterministic background so the sheen, the tint and — when enabled —
-/// the frosted blur all have something to read against.
+/// A calm neutral ground for the surfaces to sit on — the same light grey
+/// Figma shows them against, so the sheen, the shadow and the tonal wash read
+/// without anything competing with them.
+///
+/// Pass [behind] to place muted content under the surface; only the "Frosted
+/// glass" use case needs it, to show the blur softening something.
 class _Backdrop extends StatelessWidget {
-  const _Backdrop({required this.child});
+  const _Backdrop({required this.child, this.behind});
 
   final Widget child;
+  final Widget? behind;
+
+  static const Color _ground = Color(0xFFE9EAEC);
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: <Color>[
-          SavColors.wealthWeave500,
-          SavColors.lushCapital500,
-          SavColors.goldStandard500,
-        ],
-      ),
-    ),
-    child: Stack(
+  Widget build(BuildContext context) => ColoredBox(
+    color: _ground,
+    child: behind == null
+        ? child
+        : Stack(
+            children: <Widget>[
+              Positioned.fill(child: behind!),
+              child,
+            ],
+          ),
+  );
+}
+
+/// Muted placeholder content for the frosted use case — grey bars the blur can
+/// soften, standing in for real app content behind a sheet.
+class _MutedContent extends StatelessWidget {
+  const _MutedContent();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(SavSpacing.xxl),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        // A few blobs so backdrop blur has structure to soften.
-        Positioned(
-          left: 40,
-          top: 30,
-          child: _blob(SavColors.purplePower600, 120),
-        ),
-        Positioned(
-          right: 24,
-          bottom: 20,
-          child: _blob(SavColors.cyanReserve600, 90),
-        ),
-        Positioned.fill(child: child),
+        for (final width in <double>[220, 160, 260, 190, 240])
+          Padding(
+            padding: const EdgeInsets.only(bottom: SavSpacing.md),
+            child: Container(
+              width: width,
+              height: 14,
+              decoration: BoxDecoration(
+                color: SavColors.savPrimarySterling,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
       ],
     ),
-  );
-
-  Widget _blob(Color color, double size) => Container(
-    width: size,
-    height: size,
-    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
   );
 }
 
@@ -272,7 +284,7 @@ class _Tile extends StatelessWidget {
       Text(
         label,
         style: SavTypography.captionRegular.copyWith(
-          color: SavColors.savPrimaryWhite,
+          color: SavColors.savPrimarySlate,
         ),
       ),
     ],
