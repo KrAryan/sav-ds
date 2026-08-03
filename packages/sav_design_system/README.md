@@ -140,6 +140,38 @@ Note the disabled colour is **Slate**, not the Sterling the surface buttons dim
 to — this control sits on the page rather than on a dimmed surface, so it needs
 the extra contrast.
 
+### `SavMaterial`
+
+The Sav card/surface treatment: a soft diagonal sheen, a white hairline border,
+and a gentle shadow. It is **shape-agnostic** — it wraps content at whatever
+corner radius you give it.
+
+```dart
+SavMaterial(
+  borderRadius: BorderRadius.circular(20),
+  child: Padding(
+    padding: const EdgeInsets.all(SavSpacing.lg),
+    child: balanceCard,
+  ),
+);
+```
+
+Pass an `accent` to make it **tonal** — the neutral sheen gains one wash from
+that chromatic ramp's `/100`:
+
+```dart
+SavMaterial(accent: SavMaterialAccent.lushCapital, child: portfolioCard);
+```
+
+Any of the seven ramps works: `wealthWeave`, `lushCapital`, `goldStandard`,
+`purplePower`, `cyanReserve`, `satinVault`, `bronzeBounty`.
+
+> **Frosted glass.** The Figma spec includes a 6px backdrop blur, but its
+> gradient stops are opaque, so as authored the surface is solid and the blur
+> shows nothing. `SavMaterial` skips the blur pass entirely while the fill is
+> opaque; lower `SavMaterialTheme.fillOpacity` below `1` to make the surface
+> translucent and reveal the frost.
+
 ## Restyling
 
 Override the `SavButtonTheme` extension in a `Theme` scope rather than passing
@@ -164,8 +196,9 @@ Theme(
 );
 ```
 
-`SavLabelButton` has its own extension, `SavLabelButtonTheme` — it has no
-surface, so none of the gradient, grain, shadow or spinner tokens apply to it.
+`SavLabelButton` and `SavMaterial` each have their own extension
+(`SavLabelButtonTheme`, `SavMaterialTheme`) — a text button and a surface share
+none of the button-surface tokens.
 
 ## Tokens
 
