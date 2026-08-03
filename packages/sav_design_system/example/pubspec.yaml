@@ -1,0 +1,21 @@
+name: sav_design_system_example
+description: Minimal app showing how to consume the Sav design system.
+publish_to: none
+version: 1.0.0
+
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sav_design_system:
+    path: ../
+
+dev_dependencies:
+  very_good_analysis: ^10.3.0
+
+flutter:
+  uses-material-design: true

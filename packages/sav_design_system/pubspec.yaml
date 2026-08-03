@@ -1,0 +1,37 @@
+name: sav_design_system
+description: >-
+  The Sav design system: design tokens, theming, and production components
+  for Sav Flutter applications.
+version: 0.1.0
+repository: https://github.com/KrAryan/sav-ds
+
+# Distribution target is not chosen yet. `none` keeps the package from being
+# published by accident; git and path dependencies work regardless. When a
+# target is picked, replace this with the pub server URL (or delete it for
+# pub.dev) — nothing else in the package needs to change.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.3.0
+
+flutter:
+  uses-material-design: true
+  fonts:
+    # Variable font: carries both `opsz` (optical size) and `wght` axes, which
+    # is what the Figma type scale relies on. One 240 KB file replaces the
+    # five static weights the scale would otherwise need.
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans.ttf
