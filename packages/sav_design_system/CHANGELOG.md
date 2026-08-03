@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.3.0
+
+Completes the Figma Buttons page.
+
+### Added
+
+- **`SavLabelButton`** — the text-only control, matching Figma node `116:780`.
+  Two sizes (`Callout/Medium` and `Body/Bold`) across default and disabled,
+  with the dotted underline the design specifies.
+- **`SavLabelButtonTheme`** — its own extension, kept separate from
+  `SavButtonTheme` because a control with no surface shares none of the
+  gradient, grain, shadow or spinner tokens.
+- Goldens for all four `SavLabelButton` states.
+- `savHarness` in tests now takes a `background`, so text-only components can
+  be reviewed against the ground they actually sit on.
+
+### Notes
+
+- The label button dims to **Slate**, not the Sterling the surface buttons use.
+  Confirmed against Figma rather than inferred from the sibling components,
+  which would have got it wrong.
+- The control pads its interactive height to 48dp by default. The Figma frame
+  is only 18-20dp tall, which is below WCAG 2.2's target-size minimum; set
+  `expandTapTarget: false` for the frame exactly.
+
 ## 0.2.0
 
 Adds the second component from the Figma Buttons page and refactors the theme

@@ -4,6 +4,7 @@ import 'package:sav_catalog/foundations/foundations_use_cases.dart';
 import 'package:sav_catalog/main.directories.g.dart';
 import 'package:sav_catalog/use_cases/sav_action_button_use_cases.dart';
 import 'package:sav_catalog/use_cases/sav_button_use_cases.dart';
+import 'package:sav_catalog/use_cases/sav_label_button_use_cases.dart';
 import 'package:sav_design_system/sav_design_system.dart';
 import 'package:widgetbook/widgetbook.dart';
 
@@ -40,6 +41,12 @@ void main() {
         'Playground',
         'Specs',
       ]);
+      expect(registered['SavLabelButton'], <String>[
+        'All states',
+        'Playground',
+        'Specs',
+        'Tap target',
+      ]);
       expect(registered['SavColors'], <String>['Palette']);
       expect(registered['SavTypography'], <String>['Type scale']);
       expect(registered['SavSquircle'], <String>['Corner smoothing']);
@@ -56,6 +63,9 @@ void main() {
       'action button / all states': buildSavActionButtonMatrix,
       'action button / against SavButton': buildSavActionButtonComparison,
       'action button / specs': buildSavActionButtonSpecs,
+      'label button / all states': buildSavLabelButtonMatrix,
+      'label button / tap target': buildSavLabelButtonTapTarget,
+      'label button / specs': buildSavLabelButtonSpecs,
       'foundations / palette': buildColorPalette,
       'foundations / type scale': buildTypeScale,
       'foundations / corner smoothing': buildSquircleScale,

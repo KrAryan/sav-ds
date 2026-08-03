@@ -79,6 +79,12 @@ token on `SavButtonTheme`, so changing them is a one-line edit.
 - **The button's gradients, grain, border and shadows are not bound to Figma
   variables** — only the label colours are. They live as code-side tokens, so a
   change in Figma will not propagate automatically.
+- **Binding is inconsistent on the label button**: its Small/Disable colour uses
+  the `Sav Primary/Slate` variable, while Regular/Disable has the same value
+  typed as a raw `#7a7a7a`. Same colour today, free to drift tomorrow.
+- **The label button is drawn at 18-20dp tall**, below WCAG 2.2's 48dp
+  target-size minimum. The code pads the interactive area out by default, which
+  makes screens taller than the mockups — worth agreeing on.
 - **Optical size**: the text styles are named "9pt Regular" (the `opsz = 9`
   named instance) but Figma renders them at `opsz 36`. The code follows the
   rendered value.

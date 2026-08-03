@@ -106,6 +106,40 @@ The API is identical to `SavButton` with two differences:
 Everything else is shared: the same squircle, gradients, grain, shadows and
 state rules, drawn by the same painter.
 
+### `SavLabelButton`
+
+Text only, no surface — the lowest-emphasis control in the family. Two sizes,
+two states, and a **dotted** underline.
+
+```dart
+SavLabelButton(
+  label: 'Forgot password?',
+  onPressed: recover,
+);
+
+SavLabelButton.small(label: 'Learn more', onPressed: openHelp);
+```
+
+| Parameter | Notes |
+|---|---|
+| `size` | `regular` (Callout/Medium 16/20) or `small` (Body/Bold 14/18). |
+| `expandTapTarget` | Default `true`. See below. |
+
+There is deliberately **no loading state** — Figma does not define one, and a
+text button has nowhere to put a spinner without shifting the text around it.
+An action that needs progress feedback wants a surface button.
+
+> **Tap target.** The text is only 18–20dp tall, well under WCAG 2.2's 48dp
+> minimum, so the control pads its *interactive* height out to 48dp by default
+> — the same thing Flutter's own buttons do via `MaterialTapTargetSize.padded`.
+> That padding is part of layout, so expect more vertical space than the mockup
+> shows. `expandTapTarget: false` gives the Figma frame exactly; use it only
+> where something else already guarantees a large enough target.
+
+Note the disabled colour is **Slate**, not the Sterling the surface buttons dim
+to — this control sits on the page rather than on a dimmed surface, so it needs
+the extra contrast.
+
 ## Restyling
 
 Override the `SavButtonTheme` extension in a `Theme` scope rather than passing
@@ -129,6 +163,9 @@ Theme(
   child: child,
 );
 ```
+
+`SavLabelButton` has its own extension, `SavLabelButtonTheme` — it has no
+surface, so none of the gradient, grain, shadow or spinner tokens apply to it.
 
 ## Tokens
 

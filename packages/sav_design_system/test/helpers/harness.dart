@@ -36,14 +36,20 @@ const Key savGoldenKey = ValueKey<String>('sav-golden-boundary');
 
 /// Wraps [child] in the Sav theme, sized and padded for a stable golden.
 ///
-/// The background is Sterling rather than white so the secondary button's
-/// near-white surface and the drop shadow are both visible. The padding leaves
-/// room for that shadow, which is drawn outside the widget's own bounds.
-Widget savHarness({required Widget child, double width = 329}) => MaterialApp(
+/// [background] defaults to Sterling so the secondary button's near-white
+/// surface and its drop shadow are both visible. Text-only components want a
+/// light background instead, or the contrast being reviewed is not the one the
+/// component will actually be used against. The padding leaves room for the
+/// drop shadow, which is drawn outside the widget's own bounds.
+Widget savHarness({
+  required Widget child,
+  double width = 329,
+  Color background = SavColors.savPrimarySterling,
+}) => MaterialApp(
   debugShowCheckedModeBanner: false,
   theme: SavTheme.light(),
   home: Scaffold(
-    backgroundColor: SavColors.savPrimarySterling,
+    backgroundColor: background,
     body: RepaintBoundary(
       key: savGoldenKey,
       child: Center(
