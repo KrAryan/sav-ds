@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -38,14 +37,15 @@ enum SavMaterialAccent {
   final Color tint;
 }
 
-/// Theming for `SavMaterial` — the Sav frosted-glass surface treatment.
+/// Theming for `SavMaterial` — Sav's surface fill and stroke.
 ///
-/// Holds the layers Figma stacks on a "Material": a diagonal sheen gradient, a
-/// white hairline border, a soft drop shadow, and a backdrop blur. The gradient
-/// is neutral by default and gains one accent stop when tonal.
+/// A "Material" is the fill + stroke you apply to a frame: a corner-to-corner
+/// sheen gradient, a white hairline stroke, a soft drop shadow, and a backdrop
+/// blur. The gradient is neutral by default and gains one accent stop when
+/// tonal.
 ///
 /// The treatment is **shape-agnostic**: nothing here dictates a corner radius.
-/// `SavMaterial` clips and borders whatever [BorderRadiusGeometry] the caller
+/// `SavMaterial` clips and strokes whatever [BorderRadiusGeometry] the caller
 /// gives it.
 @immutable
 class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
@@ -53,7 +53,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
   const SavMaterialTheme({
     required this.neutralColor,
     required this.highlightColor,
-    required this.angleDegrees,
+    required this.begin,
+    required this.end,
     required this.accentStop,
     required this.borderColor,
     required this.borderWidth,
@@ -66,7 +67,12 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
   factory SavMaterialTheme.standard() => const SavMaterialTheme(
     neutralColor: SavColors.savPrimaryLumen,
     highlightColor: SavColors.savPrimaryWhite,
-    angleDegrees: 163.89641626381263,
+    // Figma authors the fill as a corner-to-corner gradient: the two handles
+    // sit on the top-left and bottom-right corners, and it scales with the
+    // frame. (The CSS export's fixed 163.9° angle is only that diagonal for
+    // the reference frame size and skews the sheen on any other aspect ratio.)
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
     accentStop: 0.69353,
     borderColor: SavColors.savPrimaryWhite,
     borderWidth: 1,
@@ -89,8 +95,11 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
   /// The raised tone of the sheen — White, through the middle.
   final Color highlightColor;
 
-  /// Gradient direction, in CSS degrees (clockwise from straight up).
-  final double angleDegrees;
+  /// Where the gradient begins — the first stop's corner.
+  final AlignmentGeometry begin;
+
+  /// Where the gradient ends — the last stop's corner.
+  final AlignmentGeometry end;
 
   /// Position of the tonal accent stop, in `[0, 1]`.
   ///
@@ -145,6 +154,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
       ..add(_baseStops[3]);
 
     return LinearGradient(
+      begin: begin,
+      end: end,
       colors: fillOpacity >= 1.0
           ? colors
           : <Color>[
@@ -152,10 +163,6 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
                 color.withValues(alpha: color.a * fillOpacity),
             ],
       stops: stops,
-      // Flutter's default direction is centre-left to centre-right (CSS 90deg);
-      // rotating by (angle - 90) in pixel space preserves the true CSS angle
-      // regardless of the surface's aspect ratio.
-      transform: GradientRotation((angleDegrees - 90) * math.pi / 180),
     );
   }
 
@@ -163,7 +170,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
   SavMaterialTheme copyWith({
     Color? neutralColor,
     Color? highlightColor,
-    double? angleDegrees,
+    AlignmentGeometry? begin,
+    AlignmentGeometry? end,
     double? accentStop,
     Color? borderColor,
     double? borderWidth,
@@ -173,7 +181,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
   }) => SavMaterialTheme(
     neutralColor: neutralColor ?? this.neutralColor,
     highlightColor: highlightColor ?? this.highlightColor,
-    angleDegrees: angleDegrees ?? this.angleDegrees,
+    begin: begin ?? this.begin,
+    end: end ?? this.end,
     accentStop: accentStop ?? this.accentStop,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -188,7 +197,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
     return SavMaterialTheme(
       neutralColor: Color.lerp(neutralColor, other.neutralColor, t)!,
       highlightColor: Color.lerp(highlightColor, other.highlightColor, t)!,
-      angleDegrees: lerpDouble(angleDegrees, other.angleDegrees, t)!,
+      begin: AlignmentGeometry.lerp(begin, other.begin, t)!,
+      end: AlignmentGeometry.lerp(end, other.end, t)!,
       accentStop: lerpDouble(accentStop, other.accentStop, t)!,
       borderColor: Color.lerp(borderColor, other.borderColor, t)!,
       borderWidth: lerpDouble(borderWidth, other.borderWidth, t)!,
@@ -204,7 +214,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
       other is SavMaterialTheme &&
           other.neutralColor == neutralColor &&
           other.highlightColor == highlightColor &&
-          other.angleDegrees == angleDegrees &&
+          other.begin == begin &&
+          other.end == end &&
           other.accentStop == accentStop &&
           other.borderColor == borderColor &&
           other.borderWidth == borderWidth &&
@@ -216,7 +227,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
   int get hashCode => Object.hash(
     neutralColor,
     highlightColor,
-    angleDegrees,
+    begin,
+    end,
     accentStop,
     borderColor,
     borderWidth,

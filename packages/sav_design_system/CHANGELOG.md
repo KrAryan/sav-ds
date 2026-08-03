@@ -1,14 +1,26 @@
 # Changelog
 
+## 0.4.1
+
+Fixes the `SavMaterial` gradient direction.
+
+- The sheen now runs **corner to corner** (top-left to bottom-right), following
+  the frame the way Figma draws it. The first cut used the CSS export's fixed
+  163.9° angle, which is that diagonal only for the reference frame size and
+  skewed the sheen — and hid the tonal wash — on the wide, short surfaces the
+  component is actually used on.
+- `SavMaterialTheme` now exposes `begin` / `end` alignments instead of
+  `angleDegrees`.
+
 ## 0.4.0
 
 Adds the Material surface from the Figma Material page.
 
 ### Added
 
-- **`SavMaterial`** — the frosted-glass surface treatment: a 163.9° sheen
-  gradient, a white hairline border, and a soft shadow. Shape-agnostic; wraps
-  content at a caller-supplied corner radius.
+- **`SavMaterial`** — Sav's surface fill and stroke: a corner-to-corner sheen
+  gradient (top-left to bottom-right), a white hairline stroke, and a soft
+  shadow. Shape-agnostic; applied to a frame at a caller-supplied corner radius.
 - **`SavMaterialAccent`** and **`SavMaterialTheme`** — a tonal material adds one
   gradient stop from a chromatic ramp's `/100`. All seven ramps are supported.
 - Goldens for the default surface and a representative set of tonal accents.

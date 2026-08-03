@@ -55,12 +55,16 @@ void main() {
       }
     });
 
-    test('carries the Figma angle as a rotation', () {
+    test('runs corner to corner, top-left to bottom-right', () {
+      // Figma authors the fill as a corner-to-corner gradient — the two
+      // handles sit on opposite corners and it follows the frame. A fixed
+      // angle (what the CSS export suggested) skews the sheen on any aspect
+      // ratio other than the reference frame's, which is what made the first
+      // cut look wrong.
       final gradient = theme.gradient();
-      expect(gradient.transform, isA<GradientRotation>());
-      final rotation = gradient.transform! as GradientRotation;
-      // (163.896 - 90) degrees in radians.
-      expect(rotation.radians, closeTo(1.28974, 0.0001));
+      expect(gradient.begin, Alignment.topLeft);
+      expect(gradient.end, Alignment.bottomRight);
+      expect(gradient.transform, isNull);
     });
 
     test('an opaque fill keeps the stops fully opaque', () {
