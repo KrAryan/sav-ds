@@ -202,6 +202,10 @@ injected at paint time, so all five colourways — and any pair you pass — com
 from **one** set of strings rather than five bundled files. That is also why
 this package still has no third-party dependencies: there is no `flutter_svg`.
 
+> The technique — and the reasoning behind the boolean `showProductName` — is
+> written up framework-agnostically in
+> [`docs/multi-colour-logomarks.md`](../../docs/multi-colour-logomarks.md).
+
 ## Restyling
 
 Override the `SavButtonTheme` extension in a `Theme` scope rather than passing
