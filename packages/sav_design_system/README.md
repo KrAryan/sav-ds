@@ -185,11 +185,16 @@ const SavBrandLockup(productName: 'Wealth', height: 48);
 
 | Parameter | Notes |
 |---|---|
-| `colourway` | Five variants. Each chromatic one runs its ramp's **`/800` → `/600`**; `neutral` (Figma's "Default") runs Obsidian → Sterling. |
+| `colourway` | Five variants. Each chromatic one takes **three steps from one ramp**: `/800` → `/600` for the badge gradient, `/700` for the "Sav" wordmark. `neutral` (Figma's "Default") runs Obsidian → Sterling with an Obsidian wordmark. |
 | `showProductName` | Mirrors the Figma `productName` property. |
 | `productName` | Plain text, so any sub-brand works without new artwork. |
 | `height` | The logo scales; the product name keeps its own type size, as in Figma. |
-| `gradientColors` | Injects a custom pair, bypassing the colourway. |
+| `gradientColors` | Injects a custom badge pair, bypassing the colourway. |
+| `wordmarkColor` | Overrides the "Sav" glyphs — e.g. reversing to white on a dark header. |
+
+**A colourway recolours the badge *and* the wordmark; the product name does
+not change.** It stays Obsidian at 80% in every variant, so it reads as a
+separate word rather than part of the mark.
 
 **The artwork is vector strings, not an asset.** The logo is held as the SVG
 path data Figma exports, parsed by `SavPathParser` and cached. Gradients are
