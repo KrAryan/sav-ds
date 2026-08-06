@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.1
+
+Fixes `SavBrandLockup`'s wordmark colour.
+
+- **The "Sav" wordmark now recolours with the colourway**, taking its ramp's
+  `/700` — `#14399F`, `#4C426B`, `#26616C` and `#62531D` for the four chromatic
+  variants. It was previously fixed at Obsidian in all five, which is wrong
+  against Figma: only the *product name* is constant.
+- `SavBrandColourway` carries a third colour, `wordmark`, alongside its two
+  gradient stops.
+- Adds `SavBrandLockup.wordmarkColor` for reversing the mark out on a dark
+  surface. `SavBrandLockupTheme.wordmarkColor` is now nullable and, when set,
+  overrides every colourway.
+- Goldens regenerated; the wordmark tone is asserted from rasterised pixels,
+  and the product name is asserted to match no colourway tone.
+
 ## 0.5.0
 
 Adds the brand lockup, and the vector machinery behind it.

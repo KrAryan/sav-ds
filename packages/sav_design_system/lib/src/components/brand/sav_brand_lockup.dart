@@ -14,11 +14,16 @@ import 'package:sav_design_system/src/theme/sav_brand_lockup_theme.dart';
 ///
 /// ## Colourways
 ///
-/// Five, matching the Figma `Colour` property. Each is the same artwork with a
-/// different pair of gradient stops — the badge is drawn from vector strings
-/// and the colours are **injected at paint time**, so nothing is duplicated per
-/// variant. Pass [gradientColors] to inject a pair the design system does not
-/// ship.
+/// Five, matching the Figma `Colour` property. A colourway recolours **both**
+/// the badge gradient and the "Sav" wordmark, all from one ramp: `/800` into
+/// `/600` for the gradient, `/700` for the wordmark.
+///
+/// The product name stays a constant Obsidian at 80% in every variant, so it
+/// reads as a separate word rather than part of the mark.
+///
+/// The artwork is drawn from vector strings and the colours are **injected at
+/// paint time**, so nothing is duplicated per variant. Pass [gradientColors]
+/// or [wordmarkColor] to go outside the five shipped ramps.
 ///
 /// ## Sizing
 ///
@@ -32,6 +37,7 @@ class SavBrandLockup extends StatelessWidget {
     this.productName = 'String',
     this.height,
     this.gradientColors,
+    this.wordmarkColor,
     this.semanticLabel,
     super.key,
   });
@@ -56,6 +62,13 @@ class SavBrandLockup extends StatelessWidget {
   /// colour the design system does not have a ramp for yet.
   final List<Color>? gradientColors;
 
+  /// Overrides the "Sav" wordmark colour.
+  ///
+  /// Defaults to the colourway's own wordmark tone. Set this when the lockup
+  /// sits on a surface the ramp does not read against — reversing it to white
+  /// on a dark header, for instance.
+  final Color? wordmarkColor;
+
   /// Accessible label for the whole lockup.
   ///
   /// Defaults to the brand name plus the product name, since the artwork
@@ -76,7 +89,10 @@ class SavBrandLockup extends StatelessWidget {
       size: Size(size.width * scale, logoHeight),
       painter: _SavLogoPainter(
         gradient: theme.badgeGradient(gradientColors ?? colourway.colors),
-        wordmarkColor: theme.wordmarkColor,
+        // Explicit argument first, then a theme-wide override, then the
+        // colourway's own tone — which is the normal path.
+        wordmarkColor:
+            wordmarkColor ?? theme.wordmarkColor ?? colourway.wordmark,
       ),
     );
 

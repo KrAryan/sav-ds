@@ -41,6 +41,12 @@ Widget buildSavBrandLockupPlayground(BuildContext context) {
           max: 120,
           divisions: 26,
         ),
+        wordmarkColor: custom
+            ? knobs.colorOrNull(
+                label: 'Wordmark colour',
+                initialValue: SavColors.satinVault700,
+              )
+            : null,
         gradientColors: custom
             ? <Color>[
                 knobs.color(
@@ -166,7 +172,12 @@ Widget buildSavBrandLockupSpecs(BuildContext context) => SpecSheet(
               'double?, defaults to the intrinsic 35.65dp. The logo scales; '
               'the product name keeps its own type size, as in Figma.',
           'gradientColors':
-              'List<Color>?. Injects a custom pair, bypassing the colourway.',
+              'List<Color>?. Injects a custom badge pair, bypassing the '
+              'colourway.',
+          'wordmarkColor':
+              'Color?. Overrides the "Sav" glyphs. Defaults to the '
+              "colourway's own tone; set it to reverse the lockup out on a "
+              'dark surface.',
           'semanticLabel':
               'String?. Defaults to "Sav <productName>" so the artwork is '
               'reachable by screen readers.',
@@ -179,9 +190,29 @@ Widget buildSavBrandLockupSpecs(BuildContext context) => SpecSheet(
         rows: <String, String>{
           for (final c in SavBrandColourway.values)
             c.name: c == SavBrandColourway.neutral
-                ? 'Obsidian → Sterling. The only one not from a chromatic ramp.'
-                : "The ramp's /800 → /600.",
+                ? 'Badge Obsidian → Sterling, wordmark Obsidian. The only one '
+                      'not from a chromatic ramp.'
+                : 'Badge /800 → /600, wordmark /700 — all from the one ramp.',
         },
+      ),
+    ),
+    const SpecSection(
+      title: 'What a colourway recolours',
+      child: SpecList(
+        items: <String>[
+          "The badge gradient — the ramp's /800 into its /600.",
+          'The "Sav" wordmark — the same ramp\'s /700, sitting between them.',
+        ],
+      ),
+    ),
+    const SpecSection(
+      title: 'What stays constant',
+      child: SpecList(
+        positive: false,
+        items: <String>[
+          'The product name. It is Obsidian at 80% in every variant, so it '
+              'reads as a separate word rather than part of the mark.',
+        ],
       ),
     ),
     const SpecSection(

@@ -8,37 +8,66 @@ import 'package:sav_design_system/src/tokens/sav_typography.dart';
 
 /// The colourways `SavBrandLockup` ships in.
 ///
-/// Every colourway is the same artwork with a different pair of gradient
-/// stops, so the badge is drawn once and the colours are injected at paint
-/// time rather than baked into five separate assets.
+/// A colourway recolours two things: the badge's gradient and the "Sav"
+/// wordmark. Both come from one chromatic ramp — the gradient runs the ramp's
+/// **`/800` into its `/600`**, and the wordmark takes its **`/700`**, sitting
+/// between them.
 ///
-/// All five follow one rule: the ramp's **`/800` into its `/600`**. Only the
-/// neutral one breaks it, running Obsidian into Sterling.
+/// The product name beside the lockup is deliberately *not* included. It stays
+/// a constant Obsidian at 80% in every variant, so it reads as a separate word
+/// rather than part of the mark. See [SavBrandLockupTheme.productNameStyle].
+///
+/// Only [neutral] breaks the ramp rule, because Sav Primary has no numbered
+/// steps.
 enum SavBrandColourway {
-  /// Obsidian into Sterling. Figma calls this one "Default".
-  neutral(SavColors.savPrimaryObsidian, SavColors.savPrimarySterling),
+  /// Obsidian into Sterling, wordmark Obsidian. Figma calls this "Default".
+  neutral(
+    SavColors.savPrimaryObsidian,
+    SavColors.savPrimarySterling,
+    SavColors.savPrimaryObsidian,
+  ),
 
-  /// `Wealth Weave / 800` into `/600`. Figma calls this "Wealth Wave".
-  wealthWeave(SavColors.wealthWeave800, SavColors.wealthWeave600),
+  /// `Wealth Weave` — `/800` into `/600`, wordmark `/700`. Figma calls this
+  /// "Wealth Wave".
+  wealthWeave(
+    SavColors.wealthWeave800,
+    SavColors.wealthWeave600,
+    SavColors.wealthWeave700,
+  ),
 
-  /// `Purple Power / 800` into `/600`.
-  purplePower(SavColors.purplePower800, SavColors.purplePower600),
+  /// `Purple Power` — `/800` into `/600`, wordmark `/700`.
+  purplePower(
+    SavColors.purplePower800,
+    SavColors.purplePower600,
+    SavColors.purplePower700,
+  ),
 
-  /// `Cyan Reserve / 800` into `/600`.
-  cyanReserve(SavColors.cyanReserve800, SavColors.cyanReserve600),
+  /// `Cyan Reserve` — `/800` into `/600`, wordmark `/700`.
+  cyanReserve(
+    SavColors.cyanReserve800,
+    SavColors.cyanReserve600,
+    SavColors.cyanReserve700,
+  ),
 
-  /// `Gold Standard / 800` into `/600`.
-  goldStandard(SavColors.goldStandard800, SavColors.goldStandard600);
+  /// `Gold Standard` — `/800` into `/600`, wordmark `/700`.
+  goldStandard(
+    SavColors.goldStandard800,
+    SavColors.goldStandard600,
+    SavColors.goldStandard700,
+  );
 
-  const SavBrandColourway(this.shadow, this.light);
+  const SavBrandColourway(this.shadow, this.light, this.wordmark);
 
-  /// The darker stop, at 50% along the gradient.
+  /// The darker gradient stop, at 50% along the badge.
   final Color shadow;
 
-  /// The lighter stop, at the far end.
+  /// The lighter gradient stop, at the far end of the badge.
   final Color light;
 
-  /// The two stops, in gradient order.
+  /// Colour of the "Sav" wordmark glyphs.
+  final Color wordmark;
+
+  /// The badge's two gradient stops, in order.
   List<Color> get colors => <Color>[shadow, light];
 }
 
@@ -51,15 +80,14 @@ enum SavBrandColourway {
 class SavBrandLockupTheme extends ThemeExtension<SavBrandLockupTheme> {
   /// Creates a brand lockup theme.
   const SavBrandLockupTheme({
-    required this.wordmarkColor,
     required this.productNameStyle,
     required this.gap,
     required this.gradientStops,
+    this.wordmarkColor,
   });
 
   /// The shipped Sav lockup styling, transcribed from the Figma export.
   factory SavBrandLockupTheme.standard() => SavBrandLockupTheme(
-    wordmarkColor: SavColors.savPrimaryObsidian,
     // 20/1.2 at weight 550 — an ad-hoc style in Figma rather than a named one,
     // so it is spelled out here instead of pointing at the type scale.
     productNameStyle: SavTypography.headingLarge.copyWith(
@@ -87,10 +115,17 @@ class SavBrandLockupTheme extends ThemeExtension<SavBrandLockupTheme> {
     17.8229,
   ];
 
-  /// Colour of the "Sav" wordmark glyphs.
-  final Color wordmarkColor;
+  /// Overrides the wordmark colour for every colourway.
+  ///
+  /// Normally `null`: the wordmark follows the colourway's ramp, so tying it
+  /// to one colour here would flatten all five variants. Set it only when a
+  /// surface demands a single fixed treatment — a dark header, say.
+  final Color? wordmarkColor;
 
   /// Text style for the product name beside the logo.
+  ///
+  /// Constant across colourways by design — the product name is a separate
+  /// word, not part of the mark.
   final TextStyle productNameStyle;
 
   /// Space between the logo and the product name.
@@ -139,7 +174,7 @@ class SavBrandLockupTheme extends ThemeExtension<SavBrandLockupTheme> {
   SavBrandLockupTheme lerp(covariant SavBrandLockupTheme? other, double t) {
     if (other == null) return this;
     return SavBrandLockupTheme(
-      wordmarkColor: Color.lerp(wordmarkColor, other.wordmarkColor, t)!,
+      wordmarkColor: Color.lerp(wordmarkColor, other.wordmarkColor, t),
       productNameStyle: TextStyle.lerp(
         productNameStyle,
         other.productNameStyle,
