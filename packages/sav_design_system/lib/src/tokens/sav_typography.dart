@@ -39,18 +39,27 @@ abstract final class SavTypography {
 
   /// Value applied to DM Sans's optical-size axis for a given font size.
   ///
-  /// Two values are confirmed from Figma: the 16px Callout styles render at
-  /// `opsz 36` (the `Button` component) and the 14px Body styles at `opsz 32`
-  /// (the `Action Button` component). Both sit close to `2.25x` the font size,
-  /// so the remaining sizes follow that relationship, clamped to the axis's
-  /// 9-40 range. Those extrapolated values are worth confirming with design.
+  /// Three values are confirmed from Figma renders:
+  ///
+  /// | Size | `opsz` | Seen in |
+  /// |---|---|---|
+  /// | 14 | 32 | `Action Button` label |
+  /// | 16 | 36 | `Button` label |
+  /// | 20 | 36 | brand lockup product name |
+  ///
+  /// These do **not** scale with font size — 16 and 20 share a value — so
+  /// there is no formula to extrapolate from, and an earlier attempt to fit
+  /// one produced `opsz 40` at 20px, which is wrong. Unconfirmed sizes fall
+  /// back to 36, the most common value; confirm them with design before
+  /// treating them as approved.
   ///
   /// Note that Figma *names* these styles "9pt Regular" — the `opsz = 9` named
   /// instance — while rendering them far higher. The rendered value wins here.
   static double opticalSizeFor(double fontSize) => switch (fontSize) {
-    16 => 36,
     14 => 32,
-    _ => (fontSize * 2.25).clamp(9.0, 40.0),
+    16 => 36,
+    20 => 36,
+    _ => 36,
   };
 
   /// OpenType features Figma applies to Sav text: case-sensitive forms plus

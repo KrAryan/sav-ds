@@ -14,6 +14,8 @@ import 'package:sav_catalog/foundations/foundations_use_cases.dart'
     as _sav_catalog_foundations_foundations_use_cases;
 import 'package:sav_catalog/use_cases/sav_action_button_use_cases.dart'
     as _sav_catalog_use_cases_sav_action_button_use_cases;
+import 'package:sav_catalog/use_cases/sav_brand_lockup_use_cases.dart'
+    as _sav_catalog_use_cases_sav_brand_lockup_use_cases;
 import 'package:sav_catalog/use_cases/sav_button_use_cases.dart'
     as _sav_catalog_use_cases_sav_button_use_cases;
 import 'package:sav_catalog/use_cases/sav_label_button_use_cases.dart'
@@ -23,6 +25,41 @@ import 'package:sav_catalog/use_cases/sav_material_use_cases.dart'
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
 
 final directories = <_widgetbook.WidgetbookNode>[
+  _widgetbook.WidgetbookCategory(
+    name: 'Brand',
+    children: [
+      _widgetbook.WidgetbookComponent(
+        name: 'SavBrandLockup',
+        useCases: [
+          _widgetbook.WidgetbookUseCase(
+            name: 'Colourways',
+            builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
+                .buildSavBrandLockupColourways,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Playground',
+            builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
+                .buildSavBrandLockupPlayground,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Sizes',
+            builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
+                .buildSavBrandLockupSizes,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'Specs',
+            builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
+                .buildSavBrandLockupSpecs,
+          ),
+          _widgetbook.WidgetbookUseCase(
+            name: 'With and without product name',
+            builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
+                .buildSavBrandLockupProductName,
+          ),
+        ],
+      ),
+    ],
+  ),
   _widgetbook.WidgetbookCategory(
     name: 'Components',
     children: [

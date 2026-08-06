@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sav_design_system/src/theme/sav_brand_lockup_theme.dart';
 import 'package:sav_design_system/src/theme/sav_button_theme.dart';
 import 'package:sav_design_system/src/theme/sav_label_button_theme.dart';
 import 'package:sav_design_system/src/theme/sav_material_theme.dart';
@@ -38,6 +39,7 @@ abstract final class SavTheme {
         SavButtonTheme.standard(),
         SavLabelButtonTheme.standard(),
         SavMaterialTheme.standard(),
+        SavBrandLockupTheme.standard(),
       ],
     );
   }
