@@ -2,7 +2,7 @@ name: sav_design_system
 description: >-
   The Sav design system: design tokens, theming, and production components
   for Sav Flutter applications.
-version: 0.5.1
+version: 0.6.0
 repository: https://github.com/KrAryan/sav-ds
 
 # Distribution target is not chosen yet. `none` keeps the package from being

@@ -57,10 +57,10 @@ void main() {
       ]);
       expect(registered['SavBrandLockup'], <String>[
         'Colourways',
+        'Composition',
         'Playground',
         'Sizes',
         'Specs',
-        'With and without product name',
       ]);
       expect(registered['SavColors'], <String>['Palette']);
       expect(registered['SavTypography'], <String>['Type scale']);
@@ -85,7 +85,7 @@ void main() {
       'material / frosted glass': buildSavMaterialFrosted,
       'material / specs': buildSavMaterialSpecs,
       'brand / colourways': buildSavBrandLockupColourways,
-      'brand / product name': buildSavBrandLockupProductName,
+      'brand / composition': buildSavBrandLockupComposition,
       'brand / sizes': buildSavBrandLockupSizes,
       'brand / specs': buildSavBrandLockupSpecs,
       'foundations / palette': buildColorPalette,

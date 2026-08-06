@@ -80,6 +80,29 @@ void main() {
       );
     });
 
+    testWidgets('badge only', (tester) async {
+      await expectGolden(
+        tester,
+        'brand_lockup_badge_only',
+        child: const SavBrandLockup(
+          colourway: SavBrandColourway.cyanReserve,
+          showWordmark: false,
+          showProductName: false,
+        ),
+      );
+    });
+
+    testWidgets('badge with product name, no wordmark', (tester) async {
+      await expectGolden(
+        tester,
+        'brand_lockup_badge_and_product_name',
+        child: const SavBrandLockup(
+          colourway: SavBrandColourway.purplePower,
+          showWordmark: false,
+        ),
+      );
+    });
+
     testWidgets('scaled up', (tester) async {
       await expectGolden(
         tester,

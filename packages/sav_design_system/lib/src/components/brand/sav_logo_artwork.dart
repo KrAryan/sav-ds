@@ -11,8 +11,19 @@ import 'package:sav_design_system/src/painting/sav_path_parser.dart';
 ///
 /// Paths are parsed once and cached; parsing is not repeated per frame.
 abstract final class SavLogoArtwork {
-  /// The `viewBox` the paths are drawn in.
+  /// The `viewBox` the paths are drawn in — badge and wordmark together.
   static const Size viewBox = Size(83.3389, 35.6457);
+
+  /// The frame the badge alone occupies.
+  ///
+  /// The badge sits at the origin and the wordmark to its right, so dropping
+  /// the wordmark is a matter of narrowing the frame rather than re-laying
+  /// anything out. Very nearly square, which is what makes the badge usable
+  /// on its own as an app icon or avatar.
+  ///
+  /// Asserted against the parsed path in `sav_brand_lockup_test.dart`, so it
+  /// cannot drift from the artwork.
+  static const Size badgeViewBox = Size(35.7563, 35.6457);
 
   /// The rounded badge, with the "S" mark cut out of it.
   ///

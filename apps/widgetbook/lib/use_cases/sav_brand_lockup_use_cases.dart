@@ -26,6 +26,13 @@ Widget buildSavBrandLockupPlayground(BuildContext context) {
           options: SavBrandColourway.values,
           labelBuilder: (c) => c.name,
         ),
+        showWordmark: knobs.boolean(
+          label: 'Show wordmark',
+          initialValue: true,
+          description:
+              'Off narrows the artwork to the badge alone — a near-square '
+              'mark for app icons and avatars.',
+        ),
         showProductName: knobs.boolean(
           label: 'Show product name',
           initialValue: true,
@@ -98,29 +105,53 @@ Widget buildSavBrandLockupColourways(BuildContext context) => ColoredBox(
   ),
 );
 
-/// The `productName` property, on and off.
-@UseCase(
-  name: 'With and without product name',
-  type: SavBrandLockup,
-  path: '[Brand]',
-)
-Widget buildSavBrandLockupProductName(BuildContext context) => const ColoredBox(
+/// The two visibility toggles, in all four combinations.
+///
+/// Shown together because the pair is what people get wrong: dropping the
+/// wordmark narrows the artwork to the badge rather than leaving a gap.
+@UseCase(name: 'Composition', type: SavBrandLockup, path: '[Brand]')
+Widget buildSavBrandLockupComposition(BuildContext context) => ColoredBox(
   color: SavColors.savPrimaryLumen,
-  child: Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        SavBrandLockup(),
-        SizedBox(height: SavSpacing.xxl),
-        SavBrandLockup(showProductName: false),
-        SizedBox(height: SavSpacing.xxl),
-        // The product name is a plain string, so the lockup carries any
-        // sub-brand without new artwork.
-        SavBrandLockup(
-          colourway: SavBrandColourway.goldStandard,
-          productName: 'Wealth',
-        ),
-      ],
+  child: SingleChildScrollView(
+    padding: const EdgeInsets.all(SavSpacing.xxl),
+    child: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          for (final (label, wordmark, product) in const <(String, bool, bool)>[
+            ('Full lockup', true, true),
+            ('Wordmark only — showProductName: false', true, false),
+            ('Badge + product name — showWordmark: false', false, true),
+            ('Badge only — both off', false, false),
+          ]) ...<Widget>[
+            Text(
+              label,
+              style: SavTypography.captionRegular.copyWith(
+                color: SavColors.savPrimarySlate,
+              ),
+            ),
+            const SizedBox(height: SavSpacing.xs),
+            SavBrandLockup(
+              showWordmark: wordmark,
+              showProductName: product,
+            ),
+            const SizedBox(height: SavSpacing.xl),
+          ],
+          Text(
+            'The product name is plain text, so the lockup carries any '
+            'sub-brand without new artwork.',
+            style: SavTypography.captionRegular.copyWith(
+              color: SavColors.savPrimarySlate,
+            ),
+          ),
+          const SizedBox(height: SavSpacing.xs),
+          const SavBrandLockup(
+            colourway: SavBrandColourway.goldStandard,
+            productName: 'Wealth',
+          ),
+        ],
+      ),
     ),
   ),
 );
@@ -163,6 +194,10 @@ Widget buildSavBrandLockupSpecs(BuildContext context) => SpecSheet(
           'colourway':
               'SavBrandColourway, default neutral. Five variants matching the '
               'Figma Colour property (Figma names neutral "Default").',
+          'showWordmark':
+              'bool, default true. Off narrows the artwork to the badge alone, '
+              'leaving a near-square mark for icons and avatars. No Figma '
+              'counterpart — a code-side addition.',
           'showProductName':
               'bool, default true. Mirrors the Figma productName property.',
           'productName':
@@ -202,6 +237,22 @@ Widget buildSavBrandLockupSpecs(BuildContext context) => SpecSheet(
         items: <String>[
           "The badge gradient — the ramp's /800 into its /600.",
           'The "Sav" wordmark — the same ramp\'s /700, sitting between them.',
+        ],
+      ),
+    ),
+    const SpecSection(
+      title: 'Composition',
+      child: SpecList(
+        items: <String>[
+          'The badge is always drawn. The wordmark and the product name switch '
+              'off independently, giving four combinations.',
+          'Hiding the wordmark narrows the artwork rather than leaving a gap: '
+              'the badge sits at the origin and the wordmark to its right, so '
+              'the frame just gets shorter.',
+          'The badge alone is near-square, which is the form an app icon or '
+              'avatar wants.',
+          'The accessible name is unchanged either way — the badge stands for '
+              'the brand on its own.',
         ],
       ),
     ),
