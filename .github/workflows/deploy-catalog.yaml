@@ -38,12 +38,25 @@ jobs:
         working-directory: apps/widgetbook
         run: dart run build_runner build
 
+      # Two flags, both load-bearing:
+      #
       # `--base-href` must match the repository name: on a GitHub Pages project
       # site the app is served from /<repo>/, and without this every asset
       # request 404s.
+      #
+      # `--pwa-strategy=none` disables Flutter's service worker. It caches the
+      # app shell and keeps serving the previous build until it updates, which
+      # normally needs every tab closed — so a reviewer opening the catalog
+      # after a merge sees the *old* components and reasonably concludes the
+      # deploy failed. Offline support is worthless for an internal reference
+      # that redeploys on every merge; being current is the whole point.
+      # Flutter also documents the service worker as deprecated.
       - name: Build catalog
         working-directory: apps/widgetbook
-        run: flutter build web --release --base-href /${{ github.event.repository.name }}/
+        run: >-
+          flutter build web --release
+          --base-href /${{ github.event.repository.name }}/
+          --pwa-strategy=none
 
       # Published alongside the catalog so one URL carries both the visual
       # reference and the full API reference.
