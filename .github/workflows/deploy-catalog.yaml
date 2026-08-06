@@ -58,6 +58,18 @@ jobs:
           --base-href /${{ github.event.repository.name }}/
           --pwa-strategy=none
 
+      # The build emits an empty flutter_service_worker.js. That is not enough
+      # to retire the worker this catalog used to register: an empty worker is
+      # valid but never calls skipWaiting, so the old one stays in control and
+      # keeps serving its cached copy until every tab is closed. Overwrite it
+      # with a script that takes over, clears the caches, unregisters and
+      # reloads. See the file for the full reasoning.
+      - name: Retire the old service worker
+        working-directory: apps/widgetbook
+        run: |
+          cp tool/retire_service_worker.js build/web/flutter_service_worker.js
+          test -s build/web/flutter_service_worker.js
+
       # Published alongside the catalog so one URL carries both the visual
       # reference and the full API reference.
       - name: Build API reference

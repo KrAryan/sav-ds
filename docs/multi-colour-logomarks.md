@@ -236,6 +236,34 @@ Shader badgeShader(Rect rect, List<Color> stops) {
 The column-major layout maps to `matrix(a b c d e f)` as
 `[a, b, 0, 0,  c, d, 0, 0,  0, 0, 1, 0,  e, f, 0, 1]`.
 
+### Wordmark visibility is a separate decision
+
+A boolean that controls an optional product name should not silently control
+the wordmark too. The two are independent: a product name is adjacent text;
+the wordmark can be omitted to create a badge-only, near-square mark.
+
+```dart
+final artwork = showWordmark ? fullViewBox : badgeViewBox;
+
+canvas.drawPath(badgePath, Paint()..shader = badgeShader(fullViewBox));
+if (showWordmark) {
+  canvas.drawPath(wordmarkPath, Paint()..color = resolvedWordmarkColor);
+}
+
+if (showProductName) {
+  rowChildren.addAll([
+    SizedBox(width: gap),
+    Text(productName, style: productNameStyle),
+  ]);
+}
+```
+
+When `showWordmark` is `false`, size the artwork from the badge-only view box
+so no wordmark gap remains. Continue building the gradient from the full view
+box when its transform was authored in that coordinate space; using the
+narrowed frame would squash it horizontally. Do not use an empty product name,
+or the product-name boolean, as a proxy for hiding the wordmark.
+
 ### iOS / Android
 
 Both platforms can express the same thing. On iOS, `CGGradient` drawn through a
