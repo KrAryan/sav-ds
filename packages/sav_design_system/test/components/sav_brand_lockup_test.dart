@@ -10,39 +10,56 @@ void main() {
   final theme = SavBrandLockupTheme.standard();
 
   group('SavBrandColourway', () {
-    test('every chromatic colourway runs its ramp /800 into /600', () {
-      // The rule the whole set follows. A wrong pairing is subtle on screen
-      // but wrong in the brand.
-      const expected = <SavBrandColourway, (Color, Color)>{
-        SavBrandColourway.wealthWeave: (
-          SavColors.wealthWeave800,
-          SavColors.wealthWeave600,
-        ),
-        SavBrandColourway.purplePower: (
-          SavColors.purplePower800,
-          SavColors.purplePower600,
-        ),
-        SavBrandColourway.cyanReserve: (
-          SavColors.cyanReserve800,
-          SavColors.cyanReserve600,
-        ),
-        SavBrandColourway.goldStandard: (
-          SavColors.goldStandard800,
-          SavColors.goldStandard600,
-        ),
-      };
+    test(
+      'every chromatic colourway takes /800, /600 and /700 from one ramp',
+      () {
+        // The rule the whole set follows: gradient /800 into /600, wordmark /700
+        // between them. A wrong pairing is subtle on screen but wrong in the
+        // brand.
+        const expected = <SavBrandColourway, (Color, Color, Color)>{
+          SavBrandColourway.wealthWeave: (
+            SavColors.wealthWeave800,
+            SavColors.wealthWeave600,
+            SavColors.wealthWeave700,
+          ),
+          SavBrandColourway.purplePower: (
+            SavColors.purplePower800,
+            SavColors.purplePower600,
+            SavColors.purplePower700,
+          ),
+          SavBrandColourway.cyanReserve: (
+            SavColors.cyanReserve800,
+            SavColors.cyanReserve600,
+            SavColors.cyanReserve700,
+          ),
+          SavBrandColourway.goldStandard: (
+            SavColors.goldStandard800,
+            SavColors.goldStandard600,
+            SavColors.goldStandard700,
+          ),
+        };
 
-      for (final entry in expected.entries) {
-        expect(entry.key.shadow, entry.value.$1, reason: entry.key.name);
-        expect(entry.key.light, entry.value.$2, reason: entry.key.name);
-      }
-    });
+        for (final entry in expected.entries) {
+          expect(entry.key.shadow, entry.value.$1, reason: entry.key.name);
+          expect(entry.key.light, entry.value.$2, reason: entry.key.name);
+          expect(entry.key.wordmark, entry.value.$3, reason: entry.key.name);
+        }
+      },
+    );
 
     test('the neutral colourway runs Obsidian into Sterling', () {
-      // The one that breaks the /800 -> /600 rule, because Sav Primary has no
-      // numbered steps.
+      // The one that breaks the ramp rule, because Sav Primary has no numbered
+      // steps.
       expect(SavBrandColourway.neutral.shadow, SavColors.savPrimaryObsidian);
       expect(SavBrandColourway.neutral.light, SavColors.savPrimarySterling);
+      expect(SavBrandColourway.neutral.wordmark, SavColors.savPrimaryObsidian);
+    });
+
+    test('no two colourways share a wordmark colour', () {
+      // The wordmark recolours with the badge; if it did not, four of the five
+      // variants would be indistinguishable in the "Sav" glyphs.
+      final wordmarks = SavBrandColourway.values.map((c) => c.wordmark).toSet();
+      expect(wordmarks, hasLength(SavBrandColourway.values.length));
     });
 
     test('covers exactly the five Figma variants', () {
@@ -292,6 +309,55 @@ void main() {
       }
     });
 
+    // The wordmark is painted as vector glyphs, so a wrong colour is invisible
+    // to the widget tests and hidden by the goldens' tolerance. Rasterised and
+    // sampled, it is exact.
+    Future<Color> paintWordmark(Color color) async {
+      final recorder = ui.PictureRecorder();
+      Canvas(recorder).drawPath(
+        SavLogoArtwork.wordmark,
+        Paint()..color = color,
+      );
+      final picture = recorder.endRecording();
+      // The wordmark occupies x 43..83 of the view box; crop to it.
+      final image = picture.toImageSync(84, 36);
+      final data = (await image.toByteData())!.buffer.asUint8List();
+      picture.dispose();
+      image.dispose();
+
+      // Found rather than guessed: the glyphs are thin and irregular, so a
+      // hand-picked coordinate easily lands in a counter or between strokes.
+      // Take a point the path itself reports as inside, with its neighbours
+      // inside too so the sample is clear of any antialiased edge.
+      final point = _interiorPoint(SavLogoArtwork.wordmark);
+      final i = (point.dy.toInt() * 84 + point.dx.toInt()) * 4;
+      return Color.fromARGB(data[i + 3], data[i], data[i + 1], data[i + 2]);
+    }
+
+    test('the wordmark paints its colourway tone, not a fixed one', () async {
+      for (final colourway in SavBrandColourway.values) {
+        final painted = await paintWordmark(colourway.wordmark);
+        expect(
+          painted,
+          colourway.wordmark,
+          reason: '${colourway.name} wordmark',
+        );
+      }
+    });
+
+    test('the product name style is constant across colourways', () async {
+      // Only the badge and wordmark recolour. If the product name ever picked
+      // up the ramp, the lockup would read as one coloured blob.
+      const theme = SavBrandLockupTheme.standard;
+      final style = theme().productNameStyle;
+      expect(style.color, SavColors.savPrimaryObsidian.withValues(alpha: 0.8));
+      // It is not tied to any colourway's tone.
+      for (final colourway in SavBrandColourway.values) {
+        expect(style.color, isNot(colourway.wordmark));
+        expect(style.color, isNot(colourway.shadow));
+      }
+    });
+
     test('a custom injected pair reaches the pixels', () async {
       // The whole point of injecting gradients rather than bundling assets.
       final colors = await paintBadge(<Color>[
@@ -305,4 +371,23 @@ void main() {
       }
     });
   });
+}
+
+/// A point comfortably inside [path] — inside itself and on all four sides,
+/// so a sample there cannot pick up an antialiased edge.
+Offset _interiorPoint(Path path) {
+  final bounds = path.getBounds();
+  for (var y = bounds.top.ceil(); y < bounds.bottom; y++) {
+    for (var x = bounds.left.ceil(); x < bounds.right; x++) {
+      final point = Offset(x + 0.5, y + 0.5);
+      final clear =
+          path.contains(point) &&
+          path.contains(point.translate(-1, 0)) &&
+          path.contains(point.translate(1, 0)) &&
+          path.contains(point.translate(0, -1)) &&
+          path.contains(point.translate(0, 1));
+      if (clear) return Offset(x.toDouble(), y.toDouble());
+    }
+  }
+  throw StateError('No interior point found in $bounds');
 }
