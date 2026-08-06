@@ -37,6 +37,11 @@ final directories = <_widgetbook.WidgetbookNode>[
                 .buildSavBrandLockupColourways,
           ),
           _widgetbook.WidgetbookUseCase(
+            name: 'Composition',
+            builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
+                .buildSavBrandLockupComposition,
+          ),
+          _widgetbook.WidgetbookUseCase(
             name: 'Playground',
             builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
                 .buildSavBrandLockupPlayground,
@@ -50,11 +55,6 @@ final directories = <_widgetbook.WidgetbookNode>[
             name: 'Specs',
             builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
                 .buildSavBrandLockupSpecs,
-          ),
-          _widgetbook.WidgetbookUseCase(
-            name: 'With and without product name',
-            builder: _sav_catalog_use_cases_sav_brand_lockup_use_cases
-                .buildSavBrandLockupProductName,
           ),
         ],
       ),

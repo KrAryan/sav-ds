@@ -177,15 +177,20 @@ Any of the seven ramps works: `wealthWeave`, `lushCapital`, `goldStandard`,
 The Sav badge, wordmark and product name, in five colourways.
 
 ```dart
-const SavBrandLockup();                                  // Sav String
-const SavBrandLockup(showProductName: false);            // logo only
+const SavBrandLockup();                            // badge + Sav + String
+const SavBrandLockup(showProductName: false);      // badge + Sav
+const SavBrandLockup(showWordmark: false);         // badge + String
+const SavBrandLockup(                              // badge alone
+  showWordmark: false,
+  showProductName: false,
+);
 const SavBrandLockup(colourway: SavBrandColourway.cyanReserve);
-const SavBrandLockup(productName: 'Wealth', height: 48);
 ```
 
 | Parameter | Notes |
 |---|---|
 | `colourway` | Five variants. Each chromatic one takes **three steps from one ramp**: `/800` → `/600` for the badge gradient, `/700` for the "Sav" wordmark. `neutral` (Figma's "Default") runs Obsidian → Sterling with an Obsidian wordmark. |
+| `showWordmark` | Drops the "Sav" glyphs, narrowing the artwork to the badge alone — a near-square mark for app icons and avatars. No Figma counterpart; a code-side addition. |
 | `showProductName` | Mirrors the Figma `productName` property. |
 | `productName` | Plain text, so any sub-brand works without new artwork. |
 | `height` | The logo scales; the product name keeps its own type size, as in Figma. |
@@ -195,6 +200,12 @@ const SavBrandLockup(productName: 'Wealth', height: 48);
 **A colourway recolours the badge *and* the wordmark; the product name does
 not change.** It stays Obsidian at 80% in every variant, so it reads as a
 separate word rather than part of the mark.
+
+**The badge is always drawn; the other two parts switch off independently.**
+Hiding the wordmark *narrows* the artwork rather than leaving a gap — the badge
+sits at the origin and the wordmark to its right, so the frame simply gets
+shorter. The accessible name is unchanged either way, since the badge stands
+for the brand on its own.
 
 **The artwork is vector strings, not an asset.** The logo is held as the SVG
 path data Figma exports, parsed by `SavPathParser` and cached. Gradients are

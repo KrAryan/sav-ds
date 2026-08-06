@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.6.0
+
+### Added
+
+- **`SavBrandLockup.showWordmark`** — drops the "Sav" glyphs, narrowing the
+  artwork to the badge alone. That leaves a near-square mark, which is the form
+  an app icon or avatar wants. The badge is always drawn, so the two toggles
+  give four compositions.
+- `SavLogoArtwork.badgeViewBox`, the frame the badge alone occupies, asserted
+  against the parsed path so it cannot drift from the artwork.
+- Goldens for the badge-only and badge-plus-product-name forms.
+
+### Notes
+
+- `showWordmark` has **no Figma counterpart** — the component there exposes only
+  `productName`. It is a code-side addition for the icon-only case.
+- Hiding the wordmark narrows the frame rather than blanking it, so nothing
+  shifts and no dead space is left behind. The badge gradient is still built
+  against the full view box: its transform is expressed in full-view-box units,
+  so handing it the narrowed frame would squash it horizontally.
+
 ## 0.5.1
 
 Fixes `SavBrandLockup`'s wordmark colour.
