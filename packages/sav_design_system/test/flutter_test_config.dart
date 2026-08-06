@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/golden_tolerance.dart';
+
 /// Applies to every test in this package; `flutter_test` loads it
 /// automatically.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
@@ -41,7 +43,10 @@ class _TolerantGoldenComparator extends LocalFileComparator {
     : super(basedir.resolve('flutter_test_config.dart'));
 
   /// Maximum fraction of differing pixels treated as noise.
-  static const double _tolerance = 0.0025; // 0.25%
+  ///
+  /// Adjustable per test file, because the metric does not transfer between
+  /// goldens of different frame sizes — see [SavGoldenTolerance].
+  static double get _tolerance => SavGoldenTolerance.current;
 
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {

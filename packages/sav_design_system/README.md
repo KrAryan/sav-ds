@@ -172,6 +172,31 @@ Any of the seven ramps works: `wealthWeave`, `lushCapital`, `goldStandard`,
 > opaque; lower `SavMaterialTheme.fillOpacity` below `1` to make the surface
 > translucent and reveal the frost.
 
+### `SavBrandLockup`
+
+The Sav badge, wordmark and product name, in five colourways.
+
+```dart
+const SavBrandLockup();                                  // Sav String
+const SavBrandLockup(showProductName: false);            // logo only
+const SavBrandLockup(colourway: SavBrandColourway.cyanReserve);
+const SavBrandLockup(productName: 'Wealth', height: 48);
+```
+
+| Parameter | Notes |
+|---|---|
+| `colourway` | Five variants. Each chromatic one runs its ramp's **`/800` → `/600`**; `neutral` (Figma's "Default") runs Obsidian → Sterling. |
+| `showProductName` | Mirrors the Figma `productName` property. |
+| `productName` | Plain text, so any sub-brand works without new artwork. |
+| `height` | The logo scales; the product name keeps its own type size, as in Figma. |
+| `gradientColors` | Injects a custom pair, bypassing the colourway. |
+
+**The artwork is vector strings, not an asset.** The logo is held as the SVG
+path data Figma exports, parsed by `SavPathParser` and cached. Gradients are
+injected at paint time, so all five colourways — and any pair you pass — come
+from **one** set of strings rather than five bundled files. That is also why
+this package still has no third-party dependencies: there is no `flutter_svg`.
+
 ## Restyling
 
 Override the `SavButtonTheme` extension in a `Theme` scope rather than passing
@@ -196,9 +221,10 @@ Theme(
 );
 ```
 
-`SavLabelButton` and `SavMaterial` each have their own extension
-(`SavLabelButtonTheme`, `SavMaterialTheme`) — a text button and a surface share
-none of the button-surface tokens.
+`SavLabelButton`, `SavMaterial` and `SavBrandLockup` each have their own
+extension (`SavLabelButtonTheme`, `SavMaterialTheme`, `SavBrandLockupTheme`) —
+a text button, a surface and brand artwork share none of the button-surface
+tokens.
 
 ## Tokens
 

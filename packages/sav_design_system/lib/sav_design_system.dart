@@ -18,6 +18,8 @@
 /// <https://kraryan.github.io/sav-ds/>
 library;
 
+export 'src/components/brand/sav_brand_lockup.dart';
+export 'src/components/brand/sav_logo_artwork.dart';
 export 'src/components/button/sav_action_button.dart';
 export 'src/components/button/sav_button.dart';
 export 'src/components/button/sav_label_button.dart';
@@ -25,8 +27,10 @@ export 'src/components/button/sav_spinner.dart';
 export 'src/components/material/sav_material.dart';
 export 'src/painting/sav_gradient.dart';
 export 'src/painting/sav_noise.dart';
+export 'src/painting/sav_path_parser.dart';
 export 'src/painting/sav_squircle.dart';
 export 'src/painting/sav_squircle_border.dart';
+export 'src/theme/sav_brand_lockup_theme.dart';
 export 'src/theme/sav_button_theme.dart';
 export 'src/theme/sav_label_button_theme.dart';
 export 'src/theme/sav_material_theme.dart';
