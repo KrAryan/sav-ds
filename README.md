@@ -51,6 +51,15 @@ cd packages/sav_design_system && dart run tool/generate_tokens.dart
 
 CI fails if either generated output is stale, so neither can silently drift.
 
+## Technique notes
+
+Standalone engineering notes, written to be readable outside this repo:
+
+- [Multi-colour logomarks](docs/multi-colour-logomarks.md) — how gradient
+  injection works, why a colourway is data rather than an asset, and how to
+  handle a design tool's boolean visibility property without creating a state
+  that has no correct rendering.
+
 ## Consuming the package
 
 See [`packages/sav_design_system/README.md`](packages/sav_design_system/README.md)
