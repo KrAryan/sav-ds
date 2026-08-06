@@ -119,6 +119,20 @@ void main() {
       expect(bounds.height, closeTo(SavLogoArtwork.viewBox.height, 0.01));
     });
 
+    test('badgeViewBox matches the badge the artwork actually draws', () {
+      // The constant drives layout when the wordmark is hidden. If it drifts
+      // from the path, the badge is cropped or floats in dead space.
+      final bounds = SavLogoArtwork.badge.getBounds();
+      expect(SavLogoArtwork.badgeViewBox.width, closeTo(bounds.width, 0.01));
+      expect(SavLogoArtwork.badgeViewBox.height, closeTo(bounds.height, 0.01));
+      // Badge and full frame share a height, which is what lets the two forms
+      // scale by the same factor.
+      expect(
+        SavLogoArtwork.badgeViewBox.height,
+        SavLogoArtwork.viewBox.height,
+      );
+    });
+
     test('wordmark sits to the right of the badge', () {
       final bounds = SavLogoArtwork.wordmark.getBounds();
       expect(bounds.left, greaterThan(35.7563));
@@ -204,6 +218,101 @@ void main() {
           0.001,
         ),
       );
+    });
+
+    testWidgets('hides the wordmark and narrows to the badge', (tester) async {
+      Future<Size> logoSize({required bool showWordmark}) async {
+        await tester.pumpWidget(
+          savHarness(
+            child: Align(
+              child: SavBrandLockup(
+                showWordmark: showWordmark,
+                showProductName: false,
+              ),
+            ),
+          ),
+        );
+        return tester.getSize(find.byType(CustomPaint).first);
+      }
+
+      final full = await logoSize(showWordmark: true);
+      final badgeOnly = await logoSize(showWordmark: false);
+
+      // Narrowed, not blanked: dropping the wordmark must not leave dead space
+      // where it used to be.
+      expect(badgeOnly.width, lessThan(full.width));
+      expect(badgeOnly.width, closeTo(SavLogoArtwork.badgeViewBox.width, 0.01));
+      // Height is untouched, so the mark does not jump when it is toggled.
+      expect(badgeOnly.height, full.height);
+      // And it comes out near-square, which is the point of the icon form.
+      expect(badgeOnly.width / badgeOnly.height, closeTo(1, 0.01));
+    });
+
+    testWidgets('badge-only still scales without distorting', (tester) async {
+      await tester.pumpWidget(
+        savHarness(
+          child: const Align(
+            child: SavBrandLockup(
+              showWordmark: false,
+              showProductName: false,
+              height: 64,
+            ),
+          ),
+        ),
+      );
+
+      final size = tester.getSize(find.byType(CustomPaint).first);
+      expect(size.height, 64);
+      expect(
+        size.width / size.height,
+        closeTo(
+          SavLogoArtwork.badgeViewBox.width /
+              SavLogoArtwork.badgeViewBox.height,
+          0.001,
+        ),
+      );
+    });
+
+    testWidgets('the badge alone still reads as the brand', (tester) async {
+      // The mark stands for Sav whether or not the wordmark is drawn, so the
+      // accessible name must not change.
+      await tester.pumpWidget(
+        savHarness(
+          child: const Align(child: SavBrandLockup(showWordmark: false)),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(SavBrandLockup)),
+        matchesSemantics(isImage: true, label: 'Sav String'),
+      );
+    });
+
+    testWidgets('the two toggles are independent', (tester) async {
+      for (final wordmark in <bool>[true, false]) {
+        for (final product in <bool>[true, false]) {
+          await tester.pumpWidget(
+            savHarness(
+              child: Align(
+                child: SavBrandLockup(
+                  showWordmark: wordmark,
+                  showProductName: product,
+                ),
+              ),
+            ),
+          );
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: 'wordmark=$wordmark product=$product',
+          );
+          expect(
+            find.text('String'),
+            product ? findsOneWidget : findsNothing,
+            reason: 'wordmark=$wordmark product=$product',
+          );
+        }
+      }
     });
 
     testWidgets('every colourway builds', (tester) async {
