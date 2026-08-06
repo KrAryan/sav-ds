@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sav_design_system/sav_design_system.dart';
@@ -209,6 +211,98 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.text('String'), findsOneWidget);
+    });
+  });
+
+  group('painted colour', () {
+    // The goldens cannot carry this check. A wrong colourway repaints only the
+    // badge — about 1.4% of the golden frame — the same order as the
+    // cross-platform antialiasing noise their tolerance has to absorb. So the
+    // colours are asserted against real rasterised pixels instead, sampled well
+    // inside the silhouette where antialiasing is irrelevant.
+    //
+    // The badge is rasterised straight from a `PictureRecorder` rather than
+    // captured from the widget tree: `RenderRepaintBoundary.toImage` never
+    // completes under `flutter_test`, while recording a picture does.
+    Future<List<Color>> paintBadge(List<Color> gradientColors) async {
+      const view = SavLogoArtwork.viewBox;
+      final recorder = ui.PictureRecorder();
+      Canvas(recorder).drawPath(
+        SavLogoArtwork.badge,
+        Paint()
+          ..shader = theme
+              .badgeGradient(gradientColors)
+              .createShader(Offset.zero & view),
+      );
+      final picture = recorder.endRecording();
+      final image = picture.toImageSync(36, 36);
+      final data = (await image.toByteData())!.buffer.asUint8List();
+      picture.dispose();
+      image.dispose();
+
+      // Points inside the badge, clear of its edge and of the "S" counter.
+      const samples = <Offset>[Offset(6, 10), Offset(6, 26), Offset(30, 18)];
+      return <Color>[
+        for (final point in samples)
+          () {
+            final i = (point.dy.toInt() * 36 + point.dx.toInt()) * 4;
+            return Color.fromARGB(
+              data[i + 3],
+              data[i],
+              data[i + 1],
+              data[i + 2],
+            );
+          }(),
+      ];
+    }
+
+    test('neutral paints greyscale', () async {
+      final colors = await paintBadge(SavBrandColourway.neutral.colors);
+
+      for (final color in colors) {
+        expect(color.a, 1.0, reason: 'badge should be opaque');
+        // Obsidian into Sterling has no hue.
+        expect((color.r - color.g).abs(), lessThan(0.02), reason: '$color');
+        expect((color.g - color.b).abs(), lessThan(0.02), reason: '$color');
+      }
+    });
+
+    test('each chromatic colourway paints its own hue', () async {
+      // The relationships that must hold if the right ramp was injected.
+      final checks = <SavBrandColourway, bool Function(Color)>{
+        // Wealth Weave is blue.
+        SavBrandColourway.wealthWeave: (c) => c.b > c.r && c.b > c.g,
+        // Purple Power is violet: red and blue both lead green.
+        SavBrandColourway.purplePower: (c) => c.b > c.g && c.r > c.g,
+        // Cyan Reserve is teal: green and blue both lead red.
+        SavBrandColourway.cyanReserve: (c) => c.g > c.r && c.b > c.r,
+        // Gold Standard is warm: red and green both lead blue.
+        SavBrandColourway.goldStandard: (c) => c.r > c.b && c.g > c.b,
+      };
+
+      for (final entry in checks.entries) {
+        final colors = await paintBadge(entry.key.colors);
+        for (final color in colors) {
+          expect(
+            entry.value(color),
+            isTrue,
+            reason: '${entry.key.name} painted $color',
+          );
+        }
+      }
+    });
+
+    test('a custom injected pair reaches the pixels', () async {
+      // The whole point of injecting gradients rather than bundling assets.
+      final colors = await paintBadge(<Color>[
+        SavColors.satinVault800,
+        SavColors.satinVault600,
+      ]);
+
+      // Satin Vault is a mauve: red leads green throughout the ramp.
+      for (final color in colors) {
+        expect(color.r, greaterThan(color.g), reason: '$color');
+      }
     });
   });
 }
