@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.5.0
+
+Adds the brand lockup, and the vector machinery behind it.
+
+### Added
+
+- **`SavBrandLockup`** — the Sav badge, wordmark and product name, matching
+  Figma node `173:329`. Five colourways and the `productName` toggle.
+- **`SavPathParser`** — parses SVG path data into Flutter `Path`s. Supports
+  `M L H V C S Q T Z`, absolute and relative; throws on elliptical arcs rather
+  than drawing them wrong.
+- **`SavLogoArtwork`** — the logo as path strings, parsed once and cached.
+- **`SavBrandLockupTheme`** and **`SavBrandColourway`**.
+- Goldens for all five colourways, the logo-only form, and a scaled render.
+
+### Notes
+
+- The logo's gradients are **injected at paint time** rather than baked into
+  one asset per colourway, so five variants come from one set of strings and
+  callers can pass any colour pair. This keeps the package dependency-free —
+  no `flutter_svg`.
+- Every chromatic colourway follows the ramp's `/800` → `/600`; `neutral`
+  (Figma's "Default") runs Obsidian → Sterling.
+
+### Changed
+
+- **`SavTypography.opticalSizeFor` corrected at 20px.** Figma renders 20px text
+  at `opsz 36`, but the previous `2.25x` extrapolation produced 40. Optical size
+  does not scale with font size — 16 and 20 share a value — so there is no
+  formula; confirmed sizes are now explicit and the rest fall back to 36.
+
 ## 0.4.1
 
 Fixes the `SavMaterial` gradient direction.
