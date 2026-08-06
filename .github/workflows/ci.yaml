@@ -94,4 +94,4 @@ jobs:
 
       - name: Build web
         working-directory: apps/widgetbook
-        run: flutter build web --release --base-href /sav-ds/
+        run: flutter build web --release --base-href /sav-ds/ --pwa-strategy=none
