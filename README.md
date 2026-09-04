@@ -9,16 +9,33 @@ it in.
 | **API reference** | <https://kraryan.github.io/sav-ds/api/> |
 | **Design source** | Figma — Buttons, Text, Colors pages |
 
-## Layout
+## Navigation map
 
 This is a [Dart pub workspace][workspace]: one `flutter pub get` at the root
-resolves everything.
+resolves everything. Start at the row that matches what you came for.
 
 ```
-tokens/Default.tokens.json        Figma variable export — source of truth for colour
-packages/sav_design_system/       The package apps depend on
-packages/sav_design_system/example/   Minimal consuming app
-apps/widgetbook/                  The web catalog
+sav-ds/
+├── tokens/
+│   └── Default.tokens.json              Figma variable export — source of truth for colour
+│
+├── packages/sav_design_system/          The package apps depend on
+│   ├── lib/
+│   │   ├── sav_design_system.dart        Public API — the single import consumers use
+│   │   └── src/
+│   │       ├── components/               Widgets: brand/, button/, material/
+│   │       ├── theme/                    ThemeExtensions + per-component style tokens
+│   │       ├── painting/                 Gradients, noise, squircles, SVG path parsing
+│   │       └── tokens/                   Colours (generated), dimensions, typography
+│   ├── test/                             Unit, widget and golden tests (goldens/)
+│   ├── tool/generate_tokens.dart         Regenerates src/tokens/sav_colors.g.dart
+│   └── example/                          Minimal consuming app
+│
+├── apps/widgetbook/                     The web catalog (separate app)
+│   └── lib/use_cases/                    One catalog entry per component
+│
+├── docs/                                Standalone engineering notes
+└── .github/workflows/                   CI and GitHub Pages deploy
 ```
 
 The catalog is a **separate app**, not part of the package, so consumers never

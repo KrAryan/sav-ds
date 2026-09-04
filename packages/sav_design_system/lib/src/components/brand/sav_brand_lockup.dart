@@ -168,16 +168,15 @@ class _SavLogoPainter extends CustomPainter {
 
     canvas
       ..save()
-      // The paths are authored in view-box units; scale once and draw them
-      // as-is rather than transforming every path. Only the *width* of the
-      // frame changes when the wordmark is dropped, so the two axes still
-      // scale by the same factor.
+      // Paths are in view-box units; scale once instead of transforming each.
+      // Dropping the wordmark changes only the width, so both axes still share
+      // one factor.
       ..scale(size.width / artwork.width, size.height / artwork.height)
       ..drawPath(
         SavLogoArtwork.badge,
-        // Built against the *full* view box even when only the badge is drawn:
-        // the gradient's transform is expressed in full-view-box units, so
-        // handing it the narrowed frame would squash it horizontally.
+        // Shaded against the *full* view box even when only the badge is drawn:
+        // its transform is in full-view-box units, so a narrowed frame would
+        // squash it horizontally.
         Paint()..shader = gradient.createShader(Offset.zero & view),
       );
     if (showWordmark) {

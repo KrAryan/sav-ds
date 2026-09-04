@@ -67,10 +67,9 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
   factory SavMaterialTheme.standard() => const SavMaterialTheme(
     neutralColor: SavColors.savPrimaryLumen,
     highlightColor: SavColors.savPrimaryWhite,
-    // Figma authors the fill as a corner-to-corner gradient: the two handles
-    // sit on the top-left and bottom-right corners, and it scales with the
-    // frame. (The CSS export's fixed 163.9° angle is only that diagonal for
-    // the reference frame size and skews the sheen on any other aspect ratio.)
+    // Corner-to-corner fill that scales with the frame. (The CSS export's
+    // fixed 163.9° angle is only that diagonal at the reference size and skews
+    // the sheen at any other aspect ratio.)
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     accentStop: 0.69353,
@@ -83,9 +82,8 @@ class SavMaterialTheme extends ThemeExtension<SavMaterialTheme> {
     ),
     // CSS `backdrop-blur-[6px]`: the px value is the Gaussian sigma.
     blurSigma: 6,
-    // The Figma stops are opaque, so the surface is solid and the backdrop
-    // blur has nothing to show through. Lower this to reveal the frost — see
-    // `SavMaterial`.
+    // Figma's stops are opaque, so the surface is solid and the blur shows
+    // nothing through. Lower this to reveal the frost — see `SavMaterial`.
     fillOpacity: 1,
   );
 

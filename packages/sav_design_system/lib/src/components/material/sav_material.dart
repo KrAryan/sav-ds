@@ -87,9 +87,8 @@ class SavMaterial extends StatelessWidget {
       child: child,
     );
 
-    // Only pay for the backdrop blur when a translucent fill would actually let
-    // it show. An opaque surface hides whatever is behind it, so there is
-    // nothing to blur — skip the extra layer entirely.
+    // Only pay for the backdrop blur when a translucent fill would let it
+    // show; an opaque surface has nothing behind it to blur.
     if (theme.fillOpacity < 1.0 && theme.blurSigma > 0) {
       surface = BackdropFilter(
         filter: ImageFilter.blur(
