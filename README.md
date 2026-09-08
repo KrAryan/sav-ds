@@ -1,18 +1,69 @@
-# Sav design system
+# Sav Design System
 
-The Flutter design system for Sav, plus the web catalog the wider team reviews
-it in.
+The Flutter design system for Sav — design tokens, theming and production
+components — with a live web catalog the whole team can browse without a
+Flutter toolchain.
 
 | | |
 |---|---|
 | **Catalog** | <https://kraryan.github.io/sav-ds/> |
 | **API reference** | <https://kraryan.github.io/sav-ds/api/> |
-| **Design source** | Figma — Buttons, Text, Colors pages |
+| **Changelog** | [CHANGELOG.md](CHANGELOG.md) |
 
-## Navigation map
+## What's inside
 
-This is a [Dart pub workspace][workspace]: one `flutter pub get` at the root
-resolves everything. Start at the row that matches what you came for.
+Everything reads its styling from `ThemeData.extensions`, so a consumer installs
+one theme and uses the widgets — no per-call wiring.
+
+**Components**
+
+| | |
+|---|---|
+| `SavButton` | Full-width call to action. Primary / secondary × default / disabled / loading. |
+| `SavActionButton` | The compact 40dp sibling for inline and toolbar use. |
+| `SavLabelButton` | Text-only, dotted underline — the lowest-emphasis control. |
+| `SavMaterial` | The frosted-glass card surface. Neutral or one of seven tonal accents. |
+| `SavBrandLockup` | The Sav badge + wordmark + product name, in five colourways. |
+
+**Foundations**
+
+- **Colour** — `SavColors`, generated from the Figma variable export (10 ramps).
+- **Typography** — `SavTypography`, DM Sans (variable) plus the Obviously title face.
+- **Shape, spacing, motion** — `SavSquircle`, `SavSpacing`, `SavSizes`, `SavDurations`.
+
+Browse every component, its states and its written spec in the
+[catalog](https://kraryan.github.io/sav-ds/).
+
+## Quick start
+
+```yaml
+# pubspec.yaml
+dependencies:
+  sav_design_system:
+    git:
+      url: https://github.com/KrAryan/sav-ds.git
+      path: packages/sav_design_system
+      ref: master # pin a tag or commit for production
+```
+
+```dart
+import 'package:sav_design_system/sav_design_system.dart';
+
+MaterialApp(
+  theme: SavTheme.light(),
+  home: Scaffold(
+    body: SavButton.primary(label: 'Continue', onPressed: () {}),
+  ),
+);
+```
+
+Full API, theming and token detail:
+[`packages/sav_design_system/README.md`](packages/sav_design_system/README.md).
+
+## Repository layout
+
+A [Dart pub workspace][workspace] — one `flutter pub get` at the root resolves
+everything.
 
 ```
 sav-ds/
@@ -43,7 +94,7 @@ pull catalog tooling into a production build.
 
 [workspace]: https://dart.dev/tools/pub/workspaces
 
-## Working on it
+## Developing
 
 ```sh
 flutter pub get                                    # once, at the root
@@ -54,7 +105,7 @@ flutter analyze                                    # whole workspace
 dart format .
 ```
 
-After adding or renaming a use case, regenerate the catalog's navigation:
+After adding or renaming a catalog use case, regenerate its navigation:
 
 ```sh
 cd apps/widgetbook && dart run build_runner build
@@ -67,6 +118,8 @@ cd packages/sav_design_system && dart run tool/generate_tokens.dart
 ```
 
 CI fails if either generated output is stale, so neither can silently drift.
+Golden tests pin every component against the Figma render; review the image
+diffs on failure rather than regenerating blindly.
 
 ## Technique notes
 
@@ -77,61 +130,20 @@ Standalone engineering notes, written to be readable outside this repo:
   handle a design tool's boolean visibility property without creating a state
   that has no correct rendering.
 
-## Consuming the package
-
-See [`packages/sav_design_system/README.md`](packages/sav_design_system/README.md)
-for installation, the component API, theming and token details.
-
 ## Deployment
 
 Pushing to `master` builds the catalog and the dartdoc API reference and
-publishes both to GitHub Pages as one site. Pages is already enabled with
-**Source: GitHub Actions**; no further setup is needed.
+publishes both to GitHub Pages as one site, via
+[`.github/workflows/deploy-catalog.yaml`](.github/workflows/deploy-catalog.yaml).
+Pages is already configured with **Source: GitHub Actions**.
 
-The `--base-href` in `deploy-catalog.yaml` is derived from the repository name,
-so the catalog is served from `/sav-ds/`. Renaming the repo therefore moves the
-site without any workflow change — but the links in this file, in
-`packages/sav_design_system/README.md`, `apps/widgetbook/README.md` and
-`packages/sav_design_system/lib/sav_design_system.dart` are hardcoded and would
-need updating.
+`--base-href` is derived from the repository name, so the catalog serves from
+`/sav-ds/`. Renaming the repo moves the site with no workflow change, but the
+hardcoded links in this file, the package README and
+`lib/sav_design_system.dart` would need updating.
 
-## Open questions for design
+## Licence
 
-Things the code had to decide because Figma does not specify them. Each is a
-token on `SavButtonTheme`, so changing them is a one-line edit.
-
-- **Pressed and focus states** are undefined in Figma. The button dips to 90%
-  opacity while held and draws a 2dp focus ring for keyboard users.
-- **The button's gradients, grain, border and shadows are not bound to Figma
-  variables** — only the label colours are. They live as code-side tokens, so a
-  change in Figma will not propagate automatically. Note the border's translucent
-  stops now *do* have real tokens (`SavColors.obsidianTransparent40` / `…80`
-  equal the current `0x66…` / `0xCC…` literals) — migrating to them is part of
-  the components revisit.
-- **New colour tokens have landed but are not yet wired into components.** The
-  July 2026 export added a `200` step and `Highlight 200/400` to every chromatic
-  ramp, plus `Obsidian/White Transparent` ramps (0–80%). `SavColors` and the
-  catalog Colours page carry them now; adopting them in the buttons, material and
-  lockup — and giving the Colours page a chequerboard so translucent swatches
-  read — is the pending follow-up.
-- **Binding is inconsistent on the label button**: its Small/Disable colour uses
-  the `Sav Primary/Slate` variable, while Regular/Disable has the same value
-  typed as a raw `#7a7a7a`. Same colour today, free to drift tomorrow.
-- **The label button is drawn at 18-20dp tall**, below WCAG 2.2's 48dp
-  target-size minimum. The code pads the interactive area out by default, which
-  makes screens taller than the mockups — worth agreeing on.
-- **The Material surface's frosted blur is inert as authored.** The spec
-  includes a 6px backdrop blur, but the gradient stops are opaque, so nothing
-  shows through. What `fillOpacity` should the surface use to reveal the frost —
-  or is the blur not actually wanted?
-- **`Material/Tonal/Wealth` uses Lush Capital (green), not Wealth Weave (blue).**
-  `Material/Tonal/Purple` correctly uses Purple Power. Likely a mislabel.
-- **Optical size**: the text styles are named "9pt Regular" (the `opsz = 9`
-  named instance) but Figma renders them at `opsz 36`. The code follows the
-  rendered value.
-- **Two type scales exist** in the Figma file: the dated "Text Styles Style
-  Sheet" (implemented) and a separate "Responsive Type Styles" frame with
-  different values (not implemented).
-- **Semantic colours** — no error/success/warning tokens are defined, so those
-  Material roles are derived from the brand neutral and should not be treated
-  as approved.
+Proprietary — © Sav. See [`packages/sav_design_system/LICENSE`](packages/sav_design_system/LICENSE),
+which also records the third-party font licences (DM Sans under the SIL Open
+Font License; Obviously Narrow Semibold is a licensed commercial face).
