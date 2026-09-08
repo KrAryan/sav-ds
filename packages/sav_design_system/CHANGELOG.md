@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.7.0
+
+Re-syncs the colour tokens from the July 2026 Figma export. **Purely additive —
+every existing colour is unchanged**, so no component shifts; the goldens
+confirm it.
+
+### Added
+
+- A **`200`** step on all seven chromatic ramps.
+- **`Highlight 200`** and **`Highlight 400`** on all seven chromatic ramps.
+- Two **transparency ramps** — `Obsidian Transparent` and `White Transparent`,
+  each at 0/2/4/8/12/20/40/60/80 %. These are the first real tokens for values
+  the components currently hardcode as `Color(0x66…)` literals; e.g.
+  `SavColors.obsidianTransparent40` == the button border's `0x661F1F1F`.
+
+`SavColors` goes from 40 to 79 colours. The catalog Colours page picks the new
+ramps up automatically.
+
+### Notes
+
+- Satin Vault had no `200`; its Figma variable was mislabelled **`500 2`**
+  (#E0AEBF, a light pink that belongs in the `200` slot). Brought in as
+  `satinVault200` per design confirmation — worth correcting the name in Figma.
+- Tokens only. Wiring the new steps into the buttons, material and lockup (and
+  a chequerboard behind the translucent catalog swatches) is a separate,
+  deliberate follow-up.
+
 ## 0.6.0
 
 ### Added

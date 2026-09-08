@@ -104,7 +104,16 @@ token on `SavButtonTheme`, so changing them is a one-line edit.
   opacity while held and draws a 2dp focus ring for keyboard users.
 - **The button's gradients, grain, border and shadows are not bound to Figma
   variables** — only the label colours are. They live as code-side tokens, so a
-  change in Figma will not propagate automatically.
+  change in Figma will not propagate automatically. Note the border's translucent
+  stops now *do* have real tokens (`SavColors.obsidianTransparent40` / `…80`
+  equal the current `0x66…` / `0xCC…` literals) — migrating to them is part of
+  the components revisit.
+- **New colour tokens have landed but are not yet wired into components.** The
+  July 2026 export added a `200` step and `Highlight 200/400` to every chromatic
+  ramp, plus `Obsidian/White Transparent` ramps (0–80%). `SavColors` and the
+  catalog Colours page carry them now; adopting them in the buttons, material and
+  lockup — and giving the Colours page a chequerboard so translucent swatches
+  read — is the pending follow-up.
 - **Binding is inconsistent on the label button**: its Small/Disable colour uses
   the `Sav Primary/Slate` variable, while Regular/Disable has the same value
   typed as a raw `#7a7a7a`. Same colour today, free to drift tomorrow.

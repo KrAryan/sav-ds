@@ -250,7 +250,7 @@ tokens.
 
 | Token set | Use |
 |---|---|
-| `SavColors` | 8 ramps / 40 colours. Generated — see below. |
+| `SavColors` | 10 ramps / 79 colours: 7 chromatic ramps (`100`/`200`/`500`/`600`/`700`/`800` + `Highlight 200`/`400`), the `Sav Primary` neutrals, and `Obsidian`/`White Transparent` (0–80%). Generated — see below. |
 | `SavTypography` | The type scale, plus `SavTypography.scale` for iterating it. |
 | `SavSpacing` | 4dp spacing steps. |
 | `SavSizes` | Component measurements. |
